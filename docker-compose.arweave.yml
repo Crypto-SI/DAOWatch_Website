@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  arweave-static:
+    build:
+      context: .
+      dockerfile: Dockerfile.arweave
+    ports:
+      - "8080:80"
+    container_name: daowatch-arweave
+    volumes:
+      - ./out:/usr/share/nginx/html
+    restart: unless-stopped
+    networks:
+      - arweave-net
+
+networks:
+  arweave-net:
+    driver: bridge 
