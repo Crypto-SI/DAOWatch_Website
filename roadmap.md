@@ -7,32 +7,32 @@ This roadmap outlines our development plan for the DAO Watch website, detailing 
 ### Week 1: Website Setup and Core Infrastructure
 - [x] Domain acquisition (1 day)
 - [x] Brand guidelines development (1 day)
-- [ ] Initial repository setup (1 day)
-- [ ] Basic site structure implementation (1 day)
-- [ ] Mobile-first responsive design implementation (2 days)
+- [x] Initial repository setup (1 day)
+- [x] Basic site structure implementation (1 day)
+- [x] Mobile-first responsive design implementation (2 days)
 - [ ] Arweave decentralized hosting setup (2 days)
 
 ### Week 2: Content Strategy and Platform Integration
-- [ ] Define content categories and tags (1 day)
-- [ ] YouTube channel integration (1 day)
-- [ ] Blog post functionality (2 days)
-- [ ] Tutorial content structure and templates (1 day)
-- [ ] SEO strategy implementation (1 day)
+- [x] Define content categories and tags (1 day)
+- [x] YouTube channel integration (1 day)
+- [x] Blog post functionality (2 days)
+- [x] Tutorial content structure and templates (1 day)
+- [x] SEO strategy implementation (1 day)
 
 ## Phase 2: Core Features (May 2025)
 
 ### Week 1: Content Management
-- [ ] Advanced blog formatting options (1 day)
-- [ ] YouTube video embedding system (1 day)
-- [ ] Tutorial series framework (2 days)
+- [x] Advanced blog formatting options (1 day)
+- [x] YouTube video embedding system (1 day)
+- [x] Tutorial series framework (2 days)
 - [ ] Newsletter subscription system (1 day)
-- [ ] Author profiles and attribution (1 day)
+- [x] Author profiles and attribution (1 day)
 
 ### Week 2: User Experience
-- [ ] Advanced search functionality (2 days)
-- [ ] Category and tag filtering (1 day)
-- [ ] Related content suggestions (1 day)
-- [ ] Dark/light mode toggle (1 day)
+- [x] Advanced search functionality (2 days)
+- [x] Category and tag filtering (1 day)
+- [x] Related content suggestions (1 day)
+- [x] Dark/light mode toggle (1 day)
 - [ ] Progressive Web App (PWA) capabilities (2 days)
 
 ## Phase 3: Community Engagement (June 2025)
@@ -40,15 +40,15 @@ This roadmap outlines our development plan for the DAO Watch website, detailing 
 ### Week 1: Interactive Features
 - [ ] Comment section implementation (2 days)
 - [ ] User registration and profiles (2 days)
-- [ ] Social sharing capabilities (1 day)
+- [x] Social sharing capabilities (1 day)
 - [ ] DAO project submission form (1 day)
 - [ ] YouTube comment integration (1 day)
 
 ### Week 2: Analytics and Performance
-- [ ] Analytics integration (1 day)
-- [ ] Performance optimization (ongoing)
-- [ ] Mobile experience enhancements (2 days)
-- [ ] YouTube channel analytics integration (1 day)
+- [x] Analytics integration (1 day)
+- [x] Performance optimization (ongoing)
+- [x] Mobile experience enhancements (2 days)
+- [x] YouTube channel analytics integration (1 day)
 - [ ] Tutorial completion tracking (2 days)
 
 ## Phase 4: Expansion (July 2025)
@@ -78,7 +78,7 @@ This roadmap outlines our development plan for the DAO Watch website, detailing 
 
 ### Week 2: Community Ownership
 - [ ] Content contributor incentives (1 day)
-- [ ] Community curation mechanisms (2 days)
+- [x] Community curation mechanisms (2 days)
 - [ ] Tokenized governance for editorial decisions (2 days)
 - [ ] Decentralized content moderation (1 day)
 - [ ] Tutorial creator reward system (1 day)
