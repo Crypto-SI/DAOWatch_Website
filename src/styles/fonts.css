@@ -1,0 +1,48 @@
+/* Custom Fonts for DAO Watch */
+
+/* DAGGERSQUARE font for headings */
+@font-face {
+  font-family: 'DAGGERSQUARE';
+  src: url('/fonts/DAGGERSQUARE.woff2') format('woff2'),
+       url('/fonts/DAGGERSQUARE.woff') format('woff'),
+       url('/fonts/DAGGERSQUARE.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Also use DAGGERSQUARE for bold text */
+@font-face {
+  font-family: 'DAGGERSQUARE';
+  src: url('/fonts/DAGGERSQUARE.woff2') format('woff2'),
+       url('/fonts/DAGGERSQUARE.woff') format('woff'),
+       url('/fonts/DAGGERSQUARE.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Century Gothic font for body text */
+@font-face {
+  font-family: 'Century Gothic';
+  src: url('/fonts/centurygothic.woff2') format('woff2'),
+       url('/fonts/centurygothic.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Century Gothic';
+  src: url('/fonts/centurygothicbold.woff2') format('woff2'),
+       url('/fonts/centurygothicbold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback fonts */
+:root {
+  --font-heading: 'DAGGERSQUARE', 'Arial Black', sans-serif;
+  --font-body: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+} 
