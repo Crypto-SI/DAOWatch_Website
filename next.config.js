@@ -6,6 +6,8 @@ const nextConfig = {
     domains: ['localhost'],
     unoptimized: true,
   },
+  assetPrefix: './',
+  trailingSlash: true,
 };
 
 module.exports = nextConfig; 

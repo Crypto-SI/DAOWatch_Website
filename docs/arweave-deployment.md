@@ -94,6 +94,90 @@ For a more user-friendly URL, you can:
 1. Use the Arweave Name System (ArNS) for a `.arweave.dev` domain
 2. Use a service like [arweave.app](https://arweave.app) to link your transaction to a custom domain
 
+## Testing Locally Before Deployment
+
+You can test how your site will function on Arweave by running it locally in a Docker container that simulates the static file hosting:
+
+### 1. Create Docker Configuration
+
+Create a file named `Dockerfile.arweave`:
+
+```dockerfile
+FROM nginx:alpine
+
+# Create directory for the static files
+RUN mkdir -p /usr/share/nginx/html
+
+# Copy a custom nginx configuration
+RUN echo 'server { \
+    listen 80; \
+    server_name localhost; \
+    location / { \
+        root /usr/share/nginx/html; \
+        try_files $uri $uri.html $uri/ /index.html; \
+    } \
+    # Handle blog posts with explicit paths \
+    location ~ ^/blog/([^/]+)$ { \
+        root /usr/share/nginx/html; \
+        try_files $uri $uri.html /blog/$1.html /404.html; \
+    } \
+    # Handle 404s \
+    error_page 404 /404.html; \
+    location = /404.html { \
+        root /usr/share/nginx/html; \
+        internal; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+And a file named `docker-compose.arweave.yml`:
+
+```yaml
+version: '3'
+
+services:
+  arweave-static:
+    build:
+      context: .
+      dockerfile: Dockerfile.arweave
+    ports:
+      - "8080:80"
+    container_name: daowatch-arweave
+    volumes:
+      - ./out:/usr/share/nginx/html
+    restart: unless-stopped
+    networks:
+      - arweave-net
+
+networks:
+  arweave-net:
+    driver: bridge
+```
+
+### 2. Build and Run the Test Container
+
+After building your static site with `npm run build`, run:
+
+```bash
+docker-compose -f docker-compose.arweave.yml build
+docker-compose -f docker-compose.arweave.yml up -d
+```
+
+### 3. Test Your Static Site
+
+Visit `http://localhost:8080` to see what your site will look like when deployed to Arweave.
+
+This local test container:
+- Serves static files just like they would be served on Arweave
+- Has proper routing for blog posts and other pages
+- Properly handles assets like images and JavaScript files
+
 ## Dynamic Content Considerations
 
 The DAO Watch website uses the YouTube API for dynamic content. When deployed to Arweave:
