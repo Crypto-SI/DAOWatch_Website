@@ -50,7 +50,7 @@ const resources: Resource[] = [
     id: 1,
     title: "The Ultimate DAO Handbook",
     description: "Our comprehensive guide to understanding, participating in, and building successful DAOs.",
-    url: "https://www.amazon.co.uk/Ultimate-DAO-Handbook-Decentralized-Organizations-ebook/dp/B0C3J58TCY",
+    url: "https://www.amazon.com/Ultimate-DAO-Handbook-Decentralized-Organizations-ebook/dp/B0C3J58TCY",
     type: "book",
     tags: ["beginner", "guide", "comprehensive"]
   },
