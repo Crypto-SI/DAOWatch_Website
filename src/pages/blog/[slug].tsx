@@ -17,7 +17,7 @@ import Layout from '../../components/Layout';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { GetServerSideProps } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 import { useState, useEffect } from 'react';
 
 interface BlogPost {
@@ -35,15 +35,41 @@ interface BlogPost {
 
 interface BlogPostProps {
   slug: string;
+  fallbackData?: {
+    title: string;
+    content: string;
+    date: string;
+    author: string;
+    image: string;
+    tags: string[];
+  }
 }
 
-export default function BlogPostPage({ slug }: BlogPostProps) {
+export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // If we have fallback data, use it immediately
+    if (fallbackData) {
+      setPost({
+        id: '0',
+        title: fallbackData.title,
+        slug: slug,
+        excerpt: '',
+        content: fallbackData.content,
+        date: fallbackData.date,
+        author: fallbackData.author,
+        image: fallbackData.image,
+        link: '',
+        tags: fallbackData.tags
+      });
+      setLoading(false);
+      return;
+    }
+
     const fetchPost = async () => {
       try {
         setLoading(true);
@@ -111,8 +137,9 @@ export default function BlogPostPage({ slug }: BlogPostProps) {
     if (slug) {
       fetchPost();
     }
-  }, [slug]);
+  }, [slug, fallbackData]);
 
+  // Show a loading state while client-side fetching is happening
   if (loading) {
     return (
       <Layout>
@@ -247,33 +274,79 @@ export default function BlogPostPage({ slug }: BlogPostProps) {
               }
             }}
           />
-
+          
           <Divider my={6} />
           
-          <HStack spacing={4}>
-            <Link href="/blog">
-              <Button variant="outline" colorScheme="blue">
-                Back to All Posts
-              </Button>
-            </Link>
-            <a href={post.link} target="_blank" rel="noopener noreferrer">
-              <Button colorScheme="blue">
-                Read on Medium
-              </Button>
-            </a>
-          </HStack>
+          <Flex justifyContent="space-between" w="100%" mt={8}>
+            <Button
+              leftIcon={<FaArrowLeft />}
+              colorScheme="blue"
+              variant="outline"
+              onClick={() => router.push('/blog')}
+            >
+              Back to Blog
+            </Button>
+
+            <Button
+              as="a"
+              href={post.link || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              colorScheme="blue"
+            >
+              Read on Medium
+            </Button>
+          </Flex>
         </VStack>
       </Container>
     </Layout>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.params as { slug: string };
-  
+// Use getStaticPaths to define the paths to pre-render at build time
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Define a few default blog posts that will be pre-rendered
+  const fallbackPosts = [
+    {
+      slug: 'introduction-to-daos',
+    },
+    {
+      slug: 'the-future-of-dao-governance',
+    },
+    {
+      slug: 'dao-treasury-management-best-practices',
+    }
+  ];
+
+  const paths = fallbackPosts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+
+  return {
+    paths,
+    // Set fallback to false for static export
+    fallback: false,
+  };
+};
+
+// Use getStaticProps to fetch data at build time
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = params?.slug as string;
+
+  // Provide fallback data
+  const fallbackData = {
+    title: slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    content: '<p>This content is generated statically. Updated content will be loaded client-side if available.</p>',
+    date: new Date().toISOString(),
+    author: 'DAO Watch Team',
+    image: '/images/placeholder.jpg',
+    tags: ['DAO', 'Web3'],
+  };
+
   return {
     props: {
       slug,
+      fallbackData,
     },
   };
 }; 
