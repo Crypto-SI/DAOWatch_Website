@@ -1,4 +1,4 @@
-# DAO Watch Development Roadmap
+# DAO Watch Development Roadmap (Updated April 2025)
 
 This roadmap outlines our development plan for the DAO Watch website, detailing the phases and milestones for the project. Our team works at an accelerated pace, with most features implemented within 1 day and none taking longer than 1 week.
 
@@ -86,9 +86,15 @@ This roadmap outlines our development plan for the DAO Watch website, detailing 
 ## Continuous Improvement
 
 Throughout all phases, we commit to:
-- Regular user feedback collection and implementation (daily)
-- Security audits and updates (weekly)
+- Regular user feedback collection and implementation (weekly)
+- Security audits and updates (biweekly)
 - Accessibility improvements (ongoing)
-- Performance optimization (daily)
+- Performance optimization (weekly)
 - Content quality assurance (daily)
-- YouTube content production pipeline (ongoing) 
+- YouTube content production pipeline (weekly)
+
+## Progress Summary (April 2025)
+- Completed 22 out of 50 planned features (44%)
+- All foundation tasks completed except Arweave hosting
+- Core YouTube integration and content systems in place
+- Mobile-first design implemented throughout the site 
