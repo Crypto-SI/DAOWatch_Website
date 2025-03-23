@@ -18,6 +18,9 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+// @ts-ignore
+const arweaveConfig = require('../utils/arweave-config');
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -46,46 +49,59 @@ const PLAYLIST_IDS = [
   'PLmFN-F-XHywYSIC4QUvfpDi4zB-0aKYs8'
 ];
 
+// Use environment variable for API key - don't hardcode for GitHub
+const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '';
+
 export default function Videos() {
-  // Use client-side rendering to avoid hydration mismatch
-  const [isMounted, setIsMounted] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    setIsMounted(true);
+    // Only run on the client
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    setMounted(true);
     
     const fetchPlaylists = async () => {
       try {
         setLoading(true);
         
-        // Get API key from environment variable
-        const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-        
-        if (!apiKey) {
-          throw new Error('YouTube API key not found. Please set NEXT_PUBLIC_YOUTUBE_API_KEY in your environment variables.');
-        }
-        
-        // Fetch data for each playlist
-        const playlistsData = await Promise.all(
-          PLAYLIST_IDS.map(async (playlistId) => {
-            // First, get playlist details
-            const playlistResponse = await fetch(
+        // Fetch playlist details from the YouTube API
+        const fetchPlaylistDetails = async (playlistId: string) => {
+          try {
+            // Check if API key is available
+            if (!apiKey) {
+              console.log('YouTube API key not available, showing placeholder content');
+              return {
+                id: playlistId,
+                title: "DAO Watch Playlist",
+                description: "YouTube API key not configured. Please visit our YouTube channel directly.",
+                thumbnail: "/images/video-placeholder.jpg",
+                url: `https://www.youtube.com/playlist?list=${playlistId}`
+              };
+            }
+            
+            // Continue with API fetch if key exists
+            const response = await fetch(
               `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`
             );
             
-            if (!playlistResponse.ok) {
+            if (!response.ok) {
               throw new Error(`Failed to fetch playlist data for ${playlistId}`);
             }
             
-            const playlistData = await playlistResponse.json();
+            const data = await response.json();
             
-            if (!playlistData.items || playlistData.items.length === 0) {
+            if (!data.items || data.items.length === 0) {
               throw new Error(`No playlist found with ID: ${playlistId}`);
             }
             
-            const playlist = playlistData.items[0];
+            const playlist = data.items[0];
             const snippet = playlist.snippet;
             
             // Then, get the first video from the playlist to use its thumbnail
@@ -114,13 +130,30 @@ export default function Videos() {
               thumbnail: thumbnail,
               url: `https://www.youtube.com/playlist?list=${playlistId}`
             };
+          } catch (err) {
+            console.error(`Error fetching playlist details for ${playlistId}:`, err);
+            return {
+              id: playlistId,
+              title: "DAO Watch Playlist",
+              description: "Failed to load playlist details. Please visit our YouTube channel directly.",
+              thumbnail: "/images/video-placeholder.jpg",
+              url: `https://www.youtube.com/playlist?list=${playlistId}`
+            };
+          }
+        };
+        
+        // Fetch data for each playlist
+        const playlistsData = await Promise.all(
+          PLAYLIST_IDS.map(async (playlistId) => {
+            const playlistDetails = await fetchPlaylistDetails(playlistId);
+            return playlistDetails;
           })
         );
         
         setPlaylists(playlistsData);
       } catch (err) {
         console.error('Error fetching playlists:', err);
-        setError('Failed to load playlists. Using fallback data instead.');
+        setError('Failed to load playlist data. Please try again later.');
         
         // Fallback playlists if API call fails
         setPlaylists([
@@ -154,6 +187,19 @@ export default function Videos() {
     fetchPlaylists();
   }, []);
 
+  // Skip rendering until client-side
+  if (!mounted) {
+    return (
+      <Box py={8} bg="gray.50" id="videos">
+        <Container maxW="container.xl">
+          <Heading as="h2" size="xl" mb={6} textAlign="center">
+            Loading Videos...
+          </Heading>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
     <Box 
       py={{ base: 12, md: 20 }} 
@@ -172,7 +218,7 @@ export default function Videos() {
         opacity="0.95"
         bgGradient="linear(to-bl, #000000, #192a56, #000000)"
         backgroundSize="200% 200%"
-        animation={isMounted ? `${gradientShift} 15s ease infinite` : "none"}
+        animation={mounted ? `${gradientShift} 15s ease infinite` : "none"}
         sx={{
           "&::before": {
             content: '""',
@@ -198,7 +244,7 @@ export default function Videos() {
         borderRadius="full"
         bgGradient="radial(circle at center, rgba(61, 121, 251, 0.3) 0%, transparent 70%)"
         filter="blur(50px)"
-        opacity={isMounted ? "0.5" : "0"}
+        opacity={mounted ? "0.5" : "0"}
         transition="opacity 1s ease-in-out"
       />
       
@@ -258,7 +304,7 @@ export default function Videos() {
                   flexDirection="column"
                 >
                   <Box position="relative" height="0" pb="56.25%">
-                    {isMounted ? (
+                    {mounted ? (
                       <Image
                         src={playlist.thumbnail}
                         alt={playlist.title}

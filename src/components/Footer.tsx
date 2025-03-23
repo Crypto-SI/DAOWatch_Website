@@ -52,14 +52,16 @@ export default function Footer() {
               borderRadius="md"
               p={1}
             >
-              <Image
-                src="/branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
-                alt="DAO Watch Logo"
-                objectFit="contain"
-                w="100%"
-                h="100%"
-                fallbackSrc="/images/fallback.svg"
-              />
+              <Box boxSize={{ base: "40px", md: "50px" }}>
+                <Image
+                  src="./branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
+                  alt="DAO Watch Logo"
+                  objectFit="contain"
+                  w="100%"
+                  h="100%"
+                  fallbackSrc="./images/fallback.svg"
+                />
+              </Box>
             </Box>
             <Text fontSize="sm" maxW="300px">
               DAO Watch is your comprehensive guide to Decentralized Autonomous Organizations,

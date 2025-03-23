@@ -33,12 +33,11 @@ const RotatingLogo = dynamic(() => Promise.resolve(() => {
   // Use the GIF logo from branding folder
   return (
     <Image
-      src="/branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
+      src="./branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
       alt="DAO Watch Logo"
-      objectFit="contain"
-      w="100%"
-      h="100%"
-      fallbackSrc="/images/fallback.svg"
+      width={40}
+      height={40}
+      style={{ marginRight: "10px" }}
     />
   );
 }), { ssr: false });

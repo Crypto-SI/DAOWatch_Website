@@ -18,9 +18,12 @@ import {
   IconButton
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+// @ts-ignore
+const arweaveConfig = require('../utils/arweave-config');
 
 // Create motion components
 const MotionBox = motion.create(Box);
@@ -51,115 +54,124 @@ export default function Episodes() {
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [sampleMode, setSampleMode] = useState(false);
   const episodesPerPage = 3; // Show 3 episodes per page
   
-  // Get YouTube API key and playlist ID from environment variables
-  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-  const playlistId = process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || "PLmFN-F-XHywbuA_JAhE5zcTGtUH44VC3w";
+  // Use environment variable for API key - don't hardcode for GitHub
+  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '';
+  const playlistId = process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || 'PLmFN-F-XHywbuA_JAhE5zcTGtUH44VC3w';
   
-  useEffect(() => {
-    setMounted(true);
+  // Fetch episodes from the YouTube API
+  const fetchEpisodes = useCallback(async () => {
+    setLoading(true);
     
-    const fetchEpisodes = async () => {
-      try {
-        setLoading(true);
-        
-        // Check if API key is available
-        if (!apiKey) {
-          throw new Error('YouTube API key not found. Please set NEXT_PUBLIC_YOUTUBE_API_KEY in your environment variables.');
-        }
-        
-        const maxResults = 12; // Fetch up to 12 episodes but display fewer
-        
-        // Proxy the request through a CORS proxy if needed
-        const response = await fetch(
-          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${maxResults}&playlistId=${playlistId}&key=${apiKey}`
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch episodes');
-        }
-        
-        const data = await response.json();
-        
-        // Transform the data into our Episode interface
-        const fetchedEpisodes = data.items.map((item: any) => {
-          const snippet = item.snippet;
-          return {
-            id: item.id,
-            title: snippet.title,
-            description: snippet.description,
-            thumbnail: snippet.thumbnails.high?.url || snippet.thumbnails.medium?.url || snippet.thumbnails.default?.url,
-            videoId: snippet.resourceId.videoId,
-            publishedAt: snippet.publishedAt
-          };
-        });
-        
-        setEpisodes(fetchedEpisodes);
-      } catch (err) {
-        console.error('Error fetching YouTube playlist:', err);
-        
-        // For demo purposes, create some fallback episodes if API fails
-        const fallbackEpisodes = [
-          {
-            id: "1",
-            title: "Introduction to DAOWatch: Understanding Decentralized Autonomous Organizations",
-            description: "In this inaugural episode, we explore the fundamentals of DAOs and why they matter.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example1",
-            publishedAt: "2023-01-15T00:00:00Z"
-          },
-          {
-            id: "2",
-            title: "DAO Governance Models: Comparing Different Approaches",
-            description: "We analyze various governance structures in the DAO ecosystem.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example2",
-            publishedAt: "2023-02-01T00:00:00Z"
-          },
-          {
-            id: "3",
-            title: "The Future of DAOs in DeFi",
-            description: "Exploring how DAOs are revolutionizing decentralized finance.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example3",
-            publishedAt: "2023-02-15T00:00:00Z"
-          },
-          {
-            id: "4",
-            title: "DAOs and Legal Frameworks",
-            description: "Understanding the legal challenges and solutions for DAOs.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example4",
-            publishedAt: "2023-03-01T00:00:00Z"
-          },
-          {
-            id: "5",
-            title: "Building Community Through DAOs",
-            description: "How DAOs can foster strong, engaged communities.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example5",
-            publishedAt: "2023-03-15T00:00:00Z"
-          },
-          {
-            id: "6",
-            title: "DAO Treasury Management Best Practices",
-            description: "Expert strategies for managing DAO treasuries effectively.",
-            thumbnail: "/images/video-placeholder.jpg",
-            videoId: "example6",
-            publishedAt: "2023-04-01T00:00:00Z"
-          }
-        ];
-        
-        setEpisodes(fallbackEpisodes);
-        setError("Unable to load episodes from YouTube. Showing sample content instead.");
-      } finally {
+    try {
+      // Check if API key is available
+      if (!apiKey) {
+        console.log('YouTube API key not available, showing sample content');
         setLoading(false);
+        setError("YouTube API key not configured. Showing sample content.");
+        setSampleMode(true);
+        return;
       }
-    };
+      
+      const maxResults = 12; // Fetch up to 12 episodes but display fewer
+      
+      // Proxy the request through a CORS proxy if needed
+      const response = await fetch(
+        `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${maxResults}&playlistId=${playlistId}&key=${apiKey}`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch episodes');
+      }
+      
+      const data = await response.json();
+      
+      // Transform the data into our Episode interface
+      const fetchedEpisodes = data.items.map((item: any) => {
+        const snippet = item.snippet;
+        return {
+          id: item.id,
+          title: snippet.title,
+          description: snippet.description,
+          thumbnail: snippet.thumbnails.high?.url || snippet.thumbnails.medium?.url || snippet.thumbnails.default?.url,
+          videoId: snippet.resourceId.videoId,
+          publishedAt: snippet.publishedAt
+        };
+      });
+      
+      setEpisodes(fetchedEpisodes);
+    } catch (err) {
+      console.error('Error fetching YouTube playlist:', err);
+      
+      // For demo purposes, create some fallback episodes if API fails
+      const fallbackEpisodes = [
+        {
+          id: "1",
+          title: "Introduction to DAOWatch: Understanding Decentralized Autonomous Organizations",
+          description: "In this inaugural episode, we explore the fundamentals of DAOs and why they matter.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example1",
+          publishedAt: "2023-01-15T00:00:00Z"
+        },
+        {
+          id: "2",
+          title: "DAO Governance Models: Comparing Different Approaches",
+          description: "We analyze various governance structures in the DAO ecosystem.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example2",
+          publishedAt: "2023-02-01T00:00:00Z"
+        },
+        {
+          id: "3",
+          title: "The Future of DAOs in DeFi",
+          description: "Exploring how DAOs are revolutionizing decentralized finance.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example3",
+          publishedAt: "2023-02-15T00:00:00Z"
+        },
+        {
+          id: "4",
+          title: "DAOs and Legal Frameworks",
+          description: "Understanding the legal challenges and solutions for DAOs.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example4",
+          publishedAt: "2023-03-01T00:00:00Z"
+        },
+        {
+          id: "5",
+          title: "Building Community Through DAOs",
+          description: "How DAOs can foster strong, engaged communities.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example5",
+          publishedAt: "2023-03-15T00:00:00Z"
+        },
+        {
+          id: "6",
+          title: "DAO Treasury Management Best Practices",
+          description: "Expert strategies for managing DAO treasuries effectively.",
+          thumbnail: "/images/video-placeholder.jpg",
+          videoId: "example6",
+          publishedAt: "2023-04-01T00:00:00Z"
+        }
+      ];
+      
+      setEpisodes(fallbackEpisodes);
+      setError("Unable to load episodes from YouTube. Showing sample content instead.");
+      setSampleMode(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiKey, playlistId]);
 
-    fetchEpisodes();
-  }, []);
+  useEffect(() => {
+    // Client-side check
+    if (typeof window !== 'undefined') {
+      setMounted(true);
+      fetchEpisodes();
+    }
+  }, [fetchEpisodes]);
 
   // Calculate total pages
   const totalPages = Math.max(1, Math.ceil((episodes.length - 1) / episodesPerPage));
@@ -185,6 +197,19 @@ export default function Episodes() {
           (currentPage * episodesPerPage) + episodesPerPage
         )
     : [];
+
+  // Skip rendering until client-side
+  if (!mounted) {
+    return (
+      <Box py={8} bg="gray.50" id="episodes">
+        <Container maxW="container.xl">
+          <Heading as="h2" size="xl" mb={6} textAlign="center">
+            Loading Episodes...
+          </Heading>
+        </Container>
+      </Box>
+    );
+  }
 
   return (
     <Box 
