@@ -22,8 +22,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-// @ts-ignore
-const arweaveConfig = require('../utils/arweave-config');
+import arweaveConfig from '../utils/arweave-config.mjs';
 
 // Create motion components
 const MotionBox = motion.create(Box);

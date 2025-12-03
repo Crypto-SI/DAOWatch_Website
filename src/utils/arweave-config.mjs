@@ -8,4 +8,4 @@ const arweaveConfig = {
 // For debugging - log to verify key is loaded during build
 console.log('Arweave config loaded with key: [KEY HIDDEN]');
 
-module.exports = arweaveConfig; 
+export default arweaveConfig;

@@ -19,7 +19,7 @@
     "crypto",
     "blog"
   ],
-  "author": "Crypto SI",
+  "author": "CryptoSI <cryptosixxx@gmail.com>",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
@@ -42,6 +42,8 @@
     "@types/node": "^20.14.0",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.22",
+    "arweave": "^1.15.5",
+    "mime-types": "^2.1.35",
     "typescript": "^5.4.5"
   }
 }

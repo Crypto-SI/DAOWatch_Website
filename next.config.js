@@ -16,8 +16,11 @@ const nextConfig = {
       // Log our Arweave key during build
       console.log('Building with Arweave config:');
       try {
-        const arweaveConfig = require('./src/config/arweave-config');
-        console.log('YouTube API key:', arweaveConfig.YOUTUBE_API_KEY);
+        import('./src/config/arweave-config.mjs').then(arweaveConfig => {
+          console.log('YouTube API key:', arweaveConfig.default.YOUTUBE_API_KEY);
+        }).catch(e => {
+          console.error('Error loading Arweave config:', e);
+        });
       } catch (e) {
         console.error('Error loading Arweave config:', e);
       }

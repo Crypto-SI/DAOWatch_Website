@@ -19,8 +19,7 @@ import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-// @ts-ignore
-const arweaveConfig = require('../utils/arweave-config');
+import arweaveConfig from '../utils/arweave-config.mjs';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -58,7 +57,7 @@ export default function Videos() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [mounted, setMounted] = useState(false);
-
+  
   useEffect(() => {
     // Only run on the client
     if (typeof window === 'undefined') {
@@ -288,32 +287,32 @@ export default function Videos() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 * index, duration: 0.6 }}
               >
-                <LinkBox 
-                  borderRadius="lg"
-                  overflow="hidden"
+            <LinkBox 
+              borderRadius="lg"
+              overflow="hidden"
                   bg="blackAlpha.600"
                   backdropFilter="blur(8px)"
                   boxShadow="lg"
-                  transition="all 0.3s"
-                  _hover={{
+              transition="all 0.3s"
+              _hover={{
                     transform: "translateY(-8px)",
                     boxShadow: "0 20px 30px -10px rgba(0, 0, 0, 0.5)",
-                  }}
-                  height="100%"
-                  display="flex"
-                  flexDirection="column"
-                >
-                  <Box position="relative" height="0" pb="56.25%">
+              }}
+              height="100%"
+              display="flex"
+              flexDirection="column"
+            >
+              <Box position="relative" height="0" pb="56.25%">
                     {mounted ? (
-                      <Image
+                  <Image
                         src={playlist.thumbnail}
                         alt={playlist.title}
-                        objectFit="cover"
-                        width="100%"
-                        height="100%"
-                        position="absolute"
-                        top="0"
-                        left="0"
+                    objectFit="cover"
+                    width="100%"
+                    height="100%"
+                    position="absolute"
+                    top="0"
+                    left="0"
                         fallbackSrc="/images/video-placeholder.jpg"
                         onError={(e) => {
                           // If the high-res thumbnail fails, try a lower resolution one
@@ -322,16 +321,16 @@ export default function Videos() {
                             img.src = img.src.replace('maxresdefault', 'hqdefault');
                           }
                         }}
-                      />
-                    ) : (
-                      <Skeleton 
-                        width="100%" 
-                        height="100%" 
-                        position="absolute"
-                        top="0"
-                        left="0"
-                      />
-                    )}
+                  />
+                ) : (
+                  <Skeleton 
+                    width="100%" 
+                    height="100%" 
+                    position="absolute"
+                    top="0"
+                    left="0"
+                  />
+                )}
                     
                     {/* Playlist overlay with play icon */}
                     <Box
@@ -348,23 +347,23 @@ export default function Videos() {
                     >
                       Playlist
                     </Box>
-                  </Box>
+              </Box>
 
                   <Stack p={6} flex="1">
                     <LinkOverlay href={playlist.url} isExternal>
                       <Heading as="h3" size="md" lineHeight="1.3" mb={3} color="white">
                         {playlist.title}
-                      </Heading>
-                    </LinkOverlay>
+                  </Heading>
+                </LinkOverlay>
                     
                     <Text color="whiteAlpha.800" noOfLines={3}>
                       {playlist.description}
                     </Text>
-                  </Stack>
-                </LinkBox>
+              </Stack>
+            </LinkBox>
               </MotionBox>
-            ))}
-          </SimpleGrid>
+          ))}
+        </SimpleGrid>
         )}
 
         {error && (
