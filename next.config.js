@@ -31,27 +31,6 @@ const nextConfig = {
     }
     
     return config;
-  },
-  async headers() {
-    const longTermCache = {
-      key: 'Cache-Control',
-      value: 'public, max-age=31536000, immutable'
-    };
-
-    return [
-      {
-        source: '/fonts/:all*(woff2|woff|ttf|otf|eot)',
-        headers: [longTermCache]
-      },
-      {
-        source: '/images/:all*(jpg|jpeg|png|webp|svg)',
-        headers: [longTermCache]
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [longTermCache]
-      }
-    ];
   }
 }
 

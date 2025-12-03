@@ -24,6 +24,8 @@ import Image from 'next/image';
 const Links = [
   { name: 'Home', href: '/' },
   { name: 'Resources', href: '/resources' },
+  { name: 'Episodes', href: '/episodes' },
+  { name: 'Videos', href: '/videos' },
   { name: 'Blog', href: '/blog' },
 ];
 

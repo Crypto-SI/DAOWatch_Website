@@ -107,7 +107,7 @@ export default function Hero() {
               />
               <img
                 src="/images/hero-500.jpg"
-                alt="DAO Watch"
+                alt="Collage of DAO Watch interviews, governance dashboards, and community workshops"
                 width={500}
                 height={295}
                 loading="eager"
@@ -170,7 +170,7 @@ export default function Hero() {
                   opacity: 0.9
                 }}
               >
-                Explore Resources
+                Explore DAO Governance Resources
               </Button>
             </Link>
             <Link href="/blog">
@@ -185,7 +185,7 @@ export default function Hero() {
                   bg: "whiteAlpha.200",
                 }}
               >
-                Read Blog
+                Read the DAO Watch Blog
               </Button>
             </Link>
           </Flex>

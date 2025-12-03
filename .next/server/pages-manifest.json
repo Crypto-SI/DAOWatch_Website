@@ -1,1 +1,1 @@
-{"/_app":"pages/_app.js","/_document":"pages/_document.js","/":"pages/index.html","/blog":"pages/blog.html","/resources":"pages/resources.html","/_error":"pages/_error.js","/blog/[slug]":"pages/blog/[slug].js","/404":"pages/404.html"}
+{"/_app":"pages/_app.js","/blog":"pages/blog.html","/episodes":"pages/episodes.html","/":"pages/index.html","/_document":"pages/_document.js","/resources":"pages/resources.html","/videos":"pages/videos.html","/_error":"pages/_error.js","/blog/[slug]":"pages/blog/[slug].js","/404":"pages/404.html"}

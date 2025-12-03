@@ -55,11 +55,13 @@ export default function Footer() {
               <Box boxSize={{ base: "40px", md: "50px" }}>
                 <Image
                   src="./branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
-                  alt="DAO Watch Logo"
+                  alt="Animated DAO Watch logomark in monochrome palette"
                   objectFit="contain"
                   w="100%"
                   h="100%"
                   fallbackSrc="./images/fallback.svg"
+                  loading="lazy"
+                  decoding="async"
                 />
               </Box>
             </Box>
@@ -84,9 +86,11 @@ export default function Footer() {
           </Stack>
           <Stack align="flex-start">
             <ListHeader>Navigation</ListHeader>
-            <Link href="/">Home</Link>
-            <Link href="/resources">Resources</Link>
-            <Link href="/blog">Blog</Link>
+            <Link href="/">DAO Watch Home</Link>
+            <Link href="/resources">Resources Hub</Link>
+            <Link href="/episodes">Governance Episodes</Link>
+            <Link href="/videos">Video Briefings</Link>
+            <Link href="/blog">Insights Blog</Link>
           </Stack>
           <Stack align="flex-start">
             <ListHeader>Resources</ListHeader>

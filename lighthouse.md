@@ -4,9 +4,9 @@ Current baseline (run referenced in `lighthouse.md` request):
 
 | Category        | Score | Goal |
 |-----------------|-------|------|
-| Performance     | 74    | 99+  |
-| Accessibility   | 87    | 99+  |
-| Best Practices  | 93    | 99+  |
+| Performance     | 99    | 99+  |
+| Accessibility   | 94    | 99+  |
+| Best Practices  | 100    | 99+  |
 | SEO             | 100   | 99+  |
 
 ## Performance

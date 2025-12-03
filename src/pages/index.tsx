@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import Hero from '../components/Hero';
 import LazySection from '../components/LazySection';
 import PageHead from '../components/PageHead';
+import HomeNarrative from '../components/HomeNarrative';
 
 const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
 const Episodes = dynamic(() => import('../components/Episodes'), { ssr: false });
@@ -49,9 +50,18 @@ export default function Home() {
             }
           }
         ]}
+        keywords={[
+          'DAO Watch',
+          'DAO podcasts',
+          'DAO governance resources',
+          'decentralized governance education',
+          'Web3 community building',
+          'DAO video series'
+        ]}
       />
       <Layout>
         <Hero />
+        <HomeNarrative />
         <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
           <BlogPosts />
         </LazySection>
