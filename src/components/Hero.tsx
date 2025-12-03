@@ -1,17 +1,16 @@
 import { 
   Box, 
   Container, 
-  Heading, 
+  Heading,
   Text, 
   Button, 
   VStack,
-  Flex,
-  useColorModeValue,
-  Image
+  Flex
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -102,20 +101,36 @@ export default function Hero() {
             transition="transform 0.8s ease-out, opacity 0.8s ease-out"
           >
             <Image
-              src="/branding/DAO-Watch-D-scaled.jpg"
+              src="/images/hero.jpg"
               alt="DAO Watch"
-              width="100%"
-              height="auto"
-              objectFit="contain"
+              priority
+              width={1600}
+              height={900}
+              sizes="(min-width: 768px) 500px, 300px"
+              style={{ width: '100%', height: 'auto' }}
             />
           </Box>
           
+          <Heading
+            as="h1"
+            fontSize={{ base: "3xl", md: "5xl" }}
+            fontWeight="extrabold"
+            maxW="4xl"
+            lineHeight="1.2"
+            letterSpacing="tight"
+            opacity={isMounted ? 1 : 0}
+            transform={isMounted ? "translateY(0)" : "translateY(20px)"}
+            transition="transform 0.8s ease-out 0.2s, opacity 0.8s ease-out 0.2s"
+          >
+            Navigate the DAO universe with trustable research, tutorials, and stories.
+          </Heading>
+
           <Text 
             fontSize={{ base: "xl", md: "2xl" }} 
             maxW="3xl"
             opacity={isMounted ? "0.9" : "0"}
             transform={isMounted ? "translateY(0)" : "translateY(20px)"}
-            transition="transform 0.8s ease-out 0.2s, opacity 0.8s ease-out 0.2s"
+            transition="transform 0.8s ease-out 0.3s, opacity 0.8s ease-out 0.3s"
           >
             Your comprehensive guide to Decentralized Autonomous Organizations.
             Learn, explore, and participate in the future of collaborative governance.

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "lighthouse:incognito": "npx lighthouse http://localhost:3000 --preset=desktop --chrome-flags='--headless --incognito --disable-extensions --disk-cache-size=0 --disable-application-cache --disable-features=TranslateUI'"
   },
   "repository": {
     "type": "git",
@@ -45,5 +46,17 @@
     "arweave": "^1.15.5",
     "mime-types": "^2.1.35",
     "typescript": "^5.4.5"
+  },
+  "browserslist": {
+    "production": [
+      "chrome >= 90",
+      "edge >= 90",
+      "firefox >= 90",
+      "safari >= 14",
+      "not dead"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
   }
 }

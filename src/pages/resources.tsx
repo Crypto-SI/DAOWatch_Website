@@ -18,6 +18,7 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react';
 import Layout from '../components/Layout';
+import PageHead from '../components/PageHead';
 import { FaBook, FaVideo, FaGlobe, FaFileAlt, FaArrowRight } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
@@ -151,7 +152,19 @@ export default function Resources() {
   const staggerDuration = 0.1;
 
   return (
-    <Layout>
+    <>
+      <PageHead
+        title="Resources"
+        description="Verified DAO resources, guides, and tooling for learning decentralized governance."
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'DAO Watch Resources',
+          description: 'Curated library of DAO books, videos, documents, and websites vetted by DAO Watch.',
+          url: 'https://daowatch.io/resources'
+        }}
+      />
+      <Layout>
       <Box 
         py={{ base: 12, md: 20 }}
         position="relative"
@@ -310,5 +323,6 @@ export default function Resources() {
         </Container>
       </Box>
     </Layout>
+    </>
   );
-} 
+}

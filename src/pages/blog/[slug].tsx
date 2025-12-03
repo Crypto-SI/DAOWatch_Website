@@ -14,6 +14,7 @@ import {
   Spinner
 } from '@chakra-ui/react';
 import Layout from '../../components/Layout';
+import PageHead from '../../components/PageHead';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -139,9 +140,41 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
     }
   }, [slug, fallbackData]);
 
+  const metaTitle = post?.title || fallbackData?.title || 'Blog Post';
+  const metaDescription =
+    post?.excerpt ||
+    fallbackData?.content?.replace(/<[^>]*>?/gm, '').slice(0, 140) ||
+    'DAO Watch article';
+  const canonicalUrl = slug ? `https://daowatch.io/blog/${slug}` : 'https://daowatch.io/blog';
+  const structuredData = post
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: post.title,
+        description: metaDescription,
+        author: {
+          '@type': 'Person',
+          name: post.author
+        },
+        datePublished: post.date,
+        image: post.image,
+        mainEntityOfPage: canonicalUrl,
+        publisher: {
+          '@type': 'Organization',
+          name: 'DAO Watch',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://daowatch.io/images/logo.png'
+          }
+        }
+      }
+    : undefined;
+
   // Show a loading state while client-side fetching is happening
   if (loading) {
     return (
+      <>
+        <PageHead title={`Loading ${metaTitle}`} description={metaDescription} structuredData={structuredData} />
       <Layout>
         <Container maxW="container.xl" py={20} textAlign="center">
           <Center py={10}>
@@ -149,11 +182,14 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
           </Center>
         </Container>
       </Layout>
+      </>
     );
   }
 
   if (error || !post) {
     return (
+      <>
+        <PageHead title="Blog Post Not Found" description="We couldn't load the requested DAO Watch article." />
       <Layout>
         <Container maxW="container.xl" py={20} textAlign="center">
           <Heading mb={6}>Blog Post Not Found</Heading>
@@ -167,10 +203,13 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
           </Button>
         </Container>
       </Layout>
+      </>
     );
   }
 
   return (
+    <>
+      <PageHead title={metaTitle} description={metaDescription} structuredData={structuredData} />
     <Layout>
       <Box w="100%">
         <Image 
@@ -300,6 +339,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
         </VStack>
       </Container>
     </Layout>
+    </>
   );
 }
 

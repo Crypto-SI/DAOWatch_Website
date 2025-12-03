@@ -1,42 +1,73 @@
-import { Box, Container, SimpleGrid, Heading, Text, Button, VStack, Divider } from '@chakra-ui/react';
-import { keyframes } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { Box, Container, Skeleton, SkeletonText } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import Layout from '../components/Layout';
 import Hero from '../components/Hero';
-import BlogPosts from '../components/BlogPosts';
-import Videos from '../components/Videos';
-import BookPromo from '../components/BookPromo';
-import Community from '../components/Community';
-import Episodes from '../components/Episodes';
+import LazySection from '../components/LazySection';
+import PageHead from '../components/PageHead';
 
-// Define animation keyframes
-const gradientPulse = keyframes`
-  0% { opacity: 0.2; }
-  50% { opacity: 0.4; }
-  100% { opacity: 0.2; }
-`;
+const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
+const Episodes = dynamic(() => import('../components/Episodes'), { ssr: false });
+const Community = dynamic(() => import('../components/Community'), { ssr: false });
+const Videos = dynamic(() => import('../components/Videos'), { ssr: false });
+const BookPromo = dynamic(() => import('../components/BookPromo'), { ssr: false });
 
-const float = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-  100% { transform: translateY(0px); }
-`;
+const SectionSkeleton = ({ title }: { title: string }) => (
+  <Box py={{ base: 12, md: 20 }} bg="brand.black">
+    <Container maxW="container.xl" aria-label={`${title} placeholder`}>
+      <Skeleton height="32px" width="220px" mb={6} />
+      <SkeletonText noOfLines={4} spacing={4} />
+    </Container>
+  </Box>
+);
 
 export default function Home() {
-  const [isMounted, setIsMounted] = useState(false);
-  
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
-    <Layout>
-      <Hero />
-      <BlogPosts />
-      <Episodes />
-      <Community />
-      <Videos />
-      <BookPromo />
-    </Layout>
+    <>
+      <PageHead
+        title="Home"
+        description="DAO Watch curates resources, episodes, and videos that help you learn and participate in decentralized governance."
+        structuredData={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'DAO Watch',
+            url: 'https://daowatch.io',
+            sameAs: [
+              'https://www.youtube.com/@smartreach5326'
+            ],
+            logo: 'https://daowatch.io/images/logo.png'
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'DAO Watch',
+            url: 'https://daowatch.io',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://daowatch.io/search?q={search_term_string}',
+              'query-input': 'required name=search_term_string'
+            }
+          }
+        ]}
+      />
+      <Layout>
+        <Hero />
+        <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
+          <BlogPosts />
+        </LazySection>
+        <LazySection placeholder={<SectionSkeleton title="Recent Episodes" />}>
+          <Episodes />
+        </LazySection>
+        <LazySection placeholder={<SectionSkeleton title="Community Highlights" />}>
+          <Community />
+        </LazySection>
+        <LazySection placeholder={<SectionSkeleton title="DAO Watch Videos" />}>
+          <Videos />
+        </LazySection>
+        <LazySection placeholder={<SectionSkeleton title="Book Promotion" />}>
+          <BookPromo />
+        </LazySection>
+      </Layout>
+    </>
   );
 } 

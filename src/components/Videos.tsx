@@ -204,7 +204,7 @@ export default function Videos() {
       py={{ base: 12, md: 20 }} 
       position="relative"
       overflow="hidden"
-      color="white"
+      color="#F8FAFF"
       width="100%"
     >
       {/* Dynamic animated gradient background - darker variant */}
@@ -252,9 +252,7 @@ export default function Videos() {
           <MotionHeading 
             as="h2" 
             size="2xl" 
-            color="white"
-            bgGradient="linear(to-r, brand.blue, white)"
-            backgroundClip="text"
+            color="#F8FAFF"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -265,7 +263,7 @@ export default function Videos() {
             fontSize="xl" 
             maxW="2xl" 
             mx="auto" 
-            color="whiteAlpha.900"
+            color="#E2E8F0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -290,7 +288,8 @@ export default function Videos() {
             <LinkBox 
               borderRadius="lg"
               overflow="hidden"
-                  bg="blackAlpha.600"
+                  bg="rgba(6, 15, 29, 0.95)"
+                  border="1px solid rgba(255, 255, 255, 0.08)"
                   backdropFilter="blur(8px)"
                   boxShadow="lg"
               transition="all 0.3s"
@@ -351,12 +350,12 @@ export default function Videos() {
 
                   <Stack p={6} flex="1">
                     <LinkOverlay href={playlist.url} isExternal>
-                      <Heading as="h3" size="md" lineHeight="1.3" mb={3} color="white">
+                      <Heading as="h3" size="md" lineHeight="1.3" mb={3} color="#F8FAFF">
                         {playlist.title}
                   </Heading>
                 </LinkOverlay>
                     
-                    <Text color="whiteAlpha.800" noOfLines={3}>
+                    <Text color="#CBD5F5" noOfLines={3}>
                       {playlist.description}
                     </Text>
               </Stack>

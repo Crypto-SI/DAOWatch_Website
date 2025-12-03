@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true,
   images: { 
     unoptimized: true,
     domains: ['i.ytimg.com', 'yt3.ggpht.com'],
@@ -10,6 +11,9 @@ const nextConfig = {
   trailingSlash: true,
   
   // Add a webpack function to copy static assets
+  compiler: {
+    removeConsole: { exclude: ['error', 'warn'] }
+  },
   webpack: (config, { isServer }) => {
     // Only run this on client builds
     if (!isServer) {
@@ -27,6 +31,27 @@ const nextConfig = {
     }
     
     return config;
+  },
+  async headers() {
+    const longTermCache = {
+      key: 'Cache-Control',
+      value: 'public, max-age=31536000, immutable'
+    };
+
+    return [
+      {
+        source: '/fonts/:all*(woff2|woff|ttf|otf|eot)',
+        headers: [longTermCache]
+      },
+      {
+        source: '/images/:all*(jpg|jpeg|png|webp|svg)',
+        headers: [longTermCache]
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [longTermCache]
+      }
+    ];
   }
 }
 

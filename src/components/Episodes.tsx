@@ -216,8 +216,8 @@ export default function Episodes() {
       position="relative"
       overflow="hidden"
       width="100%"
-      bg="#010B19" // Darker blue base
-      color="white"
+      bg="#050C1A"
+      color="#F8FAFF"
     >
       {/* Dynamic animated gradient background */}
       <Box
@@ -277,8 +277,7 @@ export default function Episodes() {
           <MotionHeading 
             as="h2" 
             size="2xl"
-            bgGradient="linear(to-r, brand.blue, white)"
-            backgroundClip="text"
+            color="#F8FAFF"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -289,7 +288,7 @@ export default function Episodes() {
             fontSize="xl" 
             maxW="2xl" 
             mx="auto"
-            opacity="0.9"
+            color="#E2E8F0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
@@ -370,7 +369,9 @@ export default function Episodes() {
                         </AspectRatio>
                         
                         {/* Play button overlay */}
-                        <Box
+                        <Button
+                          aria-label={`Play ${featuredEpisode.title}`}
+                          variant="unstyled"
                           position="absolute"
                           top="0"
                           left="0"
@@ -383,13 +384,12 @@ export default function Episodes() {
                           transition="all 0.3s"
                           _hover={{ bg: "blackAlpha.500" }}
                           onClick={() => setIsPlaying(true)}
-                          cursor="pointer"
                         >
                           <Box
                             width="80px"
                             height="80px"
                             borderRadius="full"
-                            bg="rgba(255, 0, 0, 0.8)"
+                            bg="rgba(255, 0, 0, 0.9)"
                             display="flex"
                             justifyContent="center"
                             alignItems="center"
@@ -400,9 +400,10 @@ export default function Episodes() {
                               borderTop="15px solid transparent"
                               borderBottom="15px solid transparent"
                               ml={2}
+                              aria-hidden="true"
                             />
                           </Box>
-                        </Box>
+                        </Button>
                       </>
                     )}
                   </Box>
@@ -412,7 +413,7 @@ export default function Episodes() {
                       {featuredEpisode.title}
                     </Heading>
                     
-                    <Text fontSize="md" color="whiteAlpha.700" mb={4}>
+                    <Text fontSize="md" color="#CBD5F5" mb={4}>
                       {new Date(featuredEpisode.publishedAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -423,7 +424,7 @@ export default function Episodes() {
                     <Text 
                       fontSize="lg" 
                       mb={6} 
-                      color="whiteAlpha.900"
+                      color="#F8FAFF"
                       whiteSpace="pre-line"
                       css={{
                         '&': {
@@ -441,7 +442,9 @@ export default function Episodes() {
                     </Text>
                     
                     <Button
-                      colorScheme="red"
+                      bg="#F56565"
+                      color="#0B1221"
+                      _hover={{ bg: '#FC8181', color: '#0B1221' }}
                       size="lg"
                       width="fit-content"
                       onClick={() => {
@@ -502,7 +505,8 @@ export default function Episodes() {
                     key={episode.id}
                     borderRadius="lg"
                     overflow="hidden"
-                    bg="blackAlpha.600"
+                    bg="rgba(6, 15, 29, 0.95)"
+                    border="1px solid rgba(255, 255, 255, 0.08)"
                     backdropFilter="blur(8px)"
                     boxShadow="lg"
                     height="100%"
@@ -538,7 +542,7 @@ export default function Episodes() {
                           </Heading>
                         </LinkOverlay>
                         
-                        <Text fontSize="sm" color="whiteAlpha.700" mb={3}>
+                        <Text fontSize="sm" color="#CBD5F5" mb={3}>
                           {new Date(episode.publishedAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
@@ -546,7 +550,7 @@ export default function Episodes() {
                           })}
                         </Text>
                         
-                        <Text noOfLines={2} color="whiteAlpha.900">
+                        <Text noOfLines={2} color="#F8FAFF">
                           {episode.description}
                         </Text>
                       </Stack>

@@ -1,1 +1,32 @@
-{}
+{
+  "pages/index.tsx -> ../components/BlogPosts": {
+    "id": "pages/index.tsx -> ../components/BlogPosts",
+    "files": [
+      "static/chunks/src_components_BlogPosts_tsx.js"
+    ]
+  },
+  "pages/index.tsx -> ../components/BookPromo": {
+    "id": "pages/index.tsx -> ../components/BookPromo",
+    "files": [
+      "static/chunks/src_components_BookPromo_tsx.js"
+    ]
+  },
+  "pages/index.tsx -> ../components/Community": {
+    "id": "pages/index.tsx -> ../components/Community",
+    "files": [
+      "static/chunks/src_components_Community_tsx.js"
+    ]
+  },
+  "pages/index.tsx -> ../components/Episodes": {
+    "id": "pages/index.tsx -> ../components/Episodes",
+    "files": [
+      "static/chunks/src_components_Episodes_tsx.js"
+    ]
+  },
+  "pages/index.tsx -> ../components/Videos": {
+    "id": "pages/index.tsx -> ../components/Videos",
+    "files": [
+      "static/chunks/src_components_Videos_tsx.js"
+    ]
+  }
+}

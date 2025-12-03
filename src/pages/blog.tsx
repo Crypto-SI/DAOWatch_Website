@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Layout from '../components/Layout';
+import PageHead from '../components/PageHead';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
@@ -162,6 +163,18 @@ export default function Blog() {
   };
   
   return (
+    <>
+      <PageHead
+        title="Blog"
+        description="Latest DAO Watch stories, interviews, and DAO governance recaps."
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: 'DAO Watch Blog',
+          description: 'News and breakdowns on decentralized governance, DAOs, and ecosystem trends.',
+          url: 'https://daowatch.io/blog'
+        }}
+      />
     <Layout>
       <Box 
         position="relative"
@@ -448,5 +461,6 @@ export default function Blog() {
         </Box>
       </Box>
     </Layout>
+    </>
   );
-} 
+}
