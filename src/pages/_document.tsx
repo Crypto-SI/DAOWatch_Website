@@ -11,7 +11,7 @@ export default function Document() {
           as="image"
           href="/images/hero.jpg"
           type="image/jpeg"
-          imagesrcset="/images/hero.jpg 1x"
+          imageSrcSet="/images/hero.jpg 1x"
         />
       </Head>
       <body>
