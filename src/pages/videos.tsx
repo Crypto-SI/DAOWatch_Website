@@ -7,7 +7,7 @@ export default function VideosPage() {
   return (
     <>
       <PageHead
-        title="Videos"
+        title="DAO Watch Videos | Weekly DAO Briefings"
         description="Stream DAO Watch video briefings that summarize governance proposals, tooling reviews, and contributor onboarding wins."
         keywords={[
           'DAO videos',

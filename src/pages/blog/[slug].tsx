@@ -140,7 +140,8 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
     }
   }, [slug, fallbackData]);
 
-  const metaTitle = post?.title || fallbackData?.title || 'Blog Post';
+  const baseTitle = post?.title || fallbackData?.title || 'DAO Watch Article';
+  const metaTitle = `${baseTitle} | DAO Watch`;
   const metaDescription =
     post?.excerpt ||
     fallbackData?.content?.replace(/<[^>]*>?/gm, '').slice(0, 140) ||
@@ -174,7 +175,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
   if (loading) {
     return (
       <>
-        <PageHead title={`Loading ${metaTitle}`} description={metaDescription} structuredData={structuredData} />
+        <PageHead title={`Loading ${baseTitle} | DAO Watch`} description={metaDescription} structuredData={structuredData} />
       <Layout>
         <Container maxW="container.xl" py={20} textAlign="center">
           <Center py={10}>
@@ -189,7 +190,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
   if (error || !post) {
     return (
       <>
-        <PageHead title="Blog Post Not Found" description="We couldn't load the requested DAO Watch article." />
+        <PageHead title="DAO Watch Blog | Article Not Found" description="We couldn't load the requested DAO Watch article." />
       <Layout>
         <Container maxW="container.xl" py={20} textAlign="center">
           <Heading mb={6}>Blog Post Not Found</Heading>

@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <>
       <PageHead
-        title="Home"
+        title="DAO Watch | DAO Governance Resources & Media"
         description="DAO Watch curates resources, episodes, and videos that help you learn and participate in decentralized governance."
         structuredData={[
           {

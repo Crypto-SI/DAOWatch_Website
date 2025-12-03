@@ -7,7 +7,7 @@ export default function EpisodesPage() {
   return (
     <>
       <PageHead
-        title="Episodes"
+        title="DAO Watch Episodes | Governance Case Studies"
         description="Watch DAO Watch episodes covering decentralized governance best practices, treasury management, and community operations."
         keywords={[
           'DAO podcast',

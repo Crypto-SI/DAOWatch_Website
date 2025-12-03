@@ -154,7 +154,7 @@ export default function Resources() {
   return (
     <>
       <PageHead
-        title="Resources"
+        title="DAO Watch Resources | Governance Tools & Media"
         description="Verified DAO resources, guides, and tooling for learning decentralized governance."
         structuredData={{
           '@context': 'https://schema.org',

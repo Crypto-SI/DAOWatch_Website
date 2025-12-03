@@ -22,9 +22,15 @@ const DEFAULT_KEYWORDS = [
   'crypto communities'
 ];
 
+const normalizeTitle = (title?: string) => {
+  if (!title) return SITE_NAME;
+  const containsSiteName = title.toLowerCase().includes(SITE_NAME.toLowerCase());
+  return containsSiteName ? title : `${title} | ${SITE_NAME}`;
+};
+
 export default function PageHead({ title, description, structuredData, keywords, robots }: PageHeadProps) {
   const router = useRouter();
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+  const fullTitle = normalizeTitle(title);
   const metaDescription = description || DEFAULT_DESCRIPTION;
   const dataArray = Array.isArray(structuredData) ? structuredData : structuredData ? [structuredData] : [];
   const canonicalPath = router?.asPath?.split('#')[0]?.split('?')[0] || '/';

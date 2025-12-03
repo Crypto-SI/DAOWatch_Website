@@ -165,7 +165,7 @@ export default function Blog() {
   return (
     <>
       <PageHead
-        title="Blog"
+        title="DAO Watch Blog | Governance Stories & News"
         description="Latest DAO Watch stories, interviews, and DAO governance recaps."
         structuredData={{
           '@context': 'https://schema.org',
