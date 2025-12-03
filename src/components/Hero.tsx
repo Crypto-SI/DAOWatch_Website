@@ -111,7 +111,7 @@ export default function Hero() {
                 width={500}
                 height={295}
                 loading="eager"
-                fetchpriority="high"
+                fetchPriority="high"
                 style={{
                   width: '100%',
                   height: 'auto',
