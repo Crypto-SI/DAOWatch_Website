@@ -6,7 +6,8 @@ import LazySection from '../components/LazySection';
 import PageHead from '../components/PageHead';
 import HomeNarrative from '../components/HomeNarrative';
 
-const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
+// Temporarily disable BlogPosts section until the blog is restored.
+// const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
 const Episodes = dynamic(() => import('../components/Episodes'), { ssr: false });
 const Community = dynamic(() => import('../components/Community'), { ssr: false });
 const Videos = dynamic(() => import('../components/Videos'), { ssr: false });
@@ -61,10 +62,10 @@ export default function Home() {
       />
       <Layout>
         <Hero />
-        <HomeNarrative />
-        <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
+        {/* Blog section removed until the blog feed stabilizes */}
+        {/* <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
           <BlogPosts />
-        </LazySection>
+        </LazySection> */}
         <LazySection placeholder={<SectionSkeleton title="Recent Episodes" />}>
           <Episodes />
         </LazySection>
@@ -77,6 +78,7 @@ export default function Home() {
         <LazySection placeholder={<SectionSkeleton title="Book Promotion" />}>
           <BookPromo />
         </LazySection>
+        <HomeNarrative />
       </Layout>
     </>
   );
