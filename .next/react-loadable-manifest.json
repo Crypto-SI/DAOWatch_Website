@@ -1,10 +1,4 @@
 {
-  "pages/index.tsx -> ../components/BlogPosts": {
-    "id": 8702,
-    "files": [
-      "static/chunks/702.d22944a624211e4d.js"
-    ]
-  },
   "pages/index.tsx -> ../components/BookPromo": {
     "id": 3038,
     "files": [
