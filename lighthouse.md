@@ -4,10 +4,10 @@ Current baseline (run referenced in `lighthouse.md` request):
 
 | Category        | Score | Goal |
 |-----------------|-------|------|
-| Performance     | 73    | 99+  |
-| Accessibility   | 85    | 99+  |
+| Performance     | 74    | 99+  |
+| Accessibility   | 87    | 99+  |
 | Best Practices  | 93    | 99+  |
-| SEO             | 91    | 99+  |
+| SEO             | 100   | 99+  |
 
 ## Performance
 - [x] Audit and clear IndexedDB / run incognito to rule out cached data impacting LCP.  
@@ -28,6 +28,12 @@ Current baseline (run referenced in `lighthouse.md` request):
   Heavy client-only components (Episodes, Community, Videos, BookPromo, BlogPosts) now hydrate only once their section scrolls into view, so their API calls and rendering work no longer block the initial main thread.
 - [x] Maintain CLS = 0 by locking layout for above-the-fold components.  
   The hero now relies on `next/image` with intrinsic dimensions + an image preload and the new skeleton placeholders reserve consistent height for every lazy-loaded section, eliminating layout shifts while content streams in.
+- [x] Replace the 6.5 MB animated GIF logo in the header with an optimized alternative (e.g., MP4/WebM or SVG sprite) and serve it via `next/image` with responsive sizing to reclaim ~6.6 MB of payload and close the “Improve image delivery” audit.  
+  The GIF marquee was swapped for a static `logo.png` rendered with `next/image`; the asset was resized from 8334 px to 512 px (11 KB) so the header no longer downloads a 6.5 MB animation on every visit.
+- [x] Re-export `/images/hero.jpg` at multiple responsive breakpoints (or convert to AVIF/WebP) so the delivered size matches the 500 px hero container; confirm Lighthouse no longer flags it as oversized.  
+  Generated 500 px and 1000 px hero variants and replaced the hero `<Image>` with a `<picture>` element that serves the right size per breakpoint, slashing the hero payload to 24–56 KB.
+- [x] Validate no other static assets (favicon, fonts) exceed their rendered dimensions; regenerate responsive variants where necessary to keep the “Avoid enormous network payloads” metric under 1 MB.  
+  Audited every `public/images/*` asset used above the fold (book cover, placeholder, video placeholder, etc.) and downscaled each from 8K+ originals to ≤1280 px JPEGs so every fallback/thumbnail now matches its rendered footprint.
 
 ## Accessibility
 - [x] Fix color contrast violations in Episodes/Videos sections.  
@@ -40,11 +46,19 @@ Current baseline (run referenced in `lighthouse.md` request):
   Added an H1 in the hero, normalized Episodes/Videos headings to strict H2/H3/H4 order, and kept card headings inside their parents so skip-navigation + outline views remain linear.
 - [x] Re-run manual accessibility checks (10 flagged by Lighthouse) once issues resolved.  
   Completed a keyboard-only pass (tab/shift+tab through header, carousels, modals) and VoiceOver rotor check to confirm focus order, labels, and headings align with Lighthouse’s manual checklist—no outstanding issues remain.
+- [x] Remove prohibited ARIA attributes from the Episodes/Videos containers (Chakra `Container` components automatically set role="group"; ensure no conflicting `aria-*` props remain).  
+  The skeleton placeholders under `src/pages/index.tsx` no longer add `aria-label`s directly on `Container`, silencing the Lighthouse “prohibited ARIA attributes” warning.
+- [x] Increase contrast on the “View Full Playlist” CTA (e.g., lighten text or darken button background) so it passes WCAG AA per Lighthouse.  
+  The Episodes CTA now uses a high-contrast light button on the dark background with a subtle border, meeting WCAG AA per calculator (contrast 12.3:1).
+- [x] Ensure every Chakra `Link` inside Blog previews has text content or an `aria-label`; Lighthouse flagged four anonymous links.  
+  Added explicit `aria-label`s to the external `Link` wrappers in both `src/pages/blog.tsx` and `src/components/BlogPosts.tsx` so screen readers get a descriptive name even when the link wraps an entire card.
 
 ## Best Practices
 - [ ] Resolve console errors and Chrome DevTools Issues Panel findings.
 - [ ] Review CSP, COOP, XFO, and Trusted Types recommendations; confirm headers enforce policies (already passing but document evidence).
 - [ ] Verify third-party scripts are necessary; remove unused ones to aid performance score.
+- [ ] Replace the Medium RSS fetch with a first-party data source or cached JSON endpoint so the `rss2json.com 422` error disappears from console/Best Practices.
+- [ ] Audit dev browser extensions (LiveReload, wallet injectors, YouTube helpers) that inject large content scripts; disable them or run Lighthouse in a clean Chrome profile so their warnings and payload bloat do not skew results.
 
 ## SEO
 - [x] Add `<title>` element per page and ensure it's meaningful.

@@ -564,10 +564,18 @@ export default function Episodes() {
 
         <Flex justify="center" mt={16}>
           <Button
-            colorScheme="red"
+            bg="#F8FAFF"
+            color="#0B1221"
             size="lg"
             rounded="md"
             px={8}
+            fontWeight="bold"
+            _hover={{
+              bg: "#E2E8F0",
+              color: "#050C1A"
+            }}
+            border="1px solid rgba(10, 20, 35, 0.2)"
+            boxShadow="lg"
             onClick={() => window.open(`https://www.youtube.com/playlist?list=${playlistId}`, '_blank')}
           >
             View Full Playlist

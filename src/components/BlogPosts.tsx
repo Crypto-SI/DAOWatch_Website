@@ -294,7 +294,13 @@ export default function BlogPosts() {
               animate="visible"
             >
               {visiblePosts.map((post) => (
-                <Link href={post.link} key={post.id} target="_blank" rel="noopener noreferrer">
+                <Link
+                  href={post.link}
+                  key={post.id}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Read ${post.title} on Medium`}
+                >
                   <MotionBox
                     borderRadius="lg"
                     overflow="hidden"

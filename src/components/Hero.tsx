@@ -10,7 +10,6 @@ import {
 import { keyframes } from '@emotion/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -100,15 +99,26 @@ export default function Hero() {
             opacity={isMounted ? 1 : 0}
             transition="transform 0.8s ease-out, opacity 0.8s ease-out"
           >
-            <Image
-              src="/images/hero.jpg"
-              alt="DAO Watch"
-              priority
-              width={1600}
-              height={900}
-              sizes="(min-width: 768px) 500px, 300px"
-              style={{ width: '100%', height: 'auto' }}
-            />
+            <picture>
+              <source
+                srcSet="/images/hero-1000.jpg"
+                media="(min-width: 768px)"
+                type="image/jpeg"
+              />
+              <img
+                src="/images/hero-500.jpg"
+                alt="DAO Watch"
+                width={500}
+                height={295}
+                loading="eager"
+                fetchpriority="high"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '1.5rem',
+                }}
+              />
+            </picture>
           </Box>
           
           <Heading

@@ -120,7 +120,7 @@ export default function BookPromo() {
           >
             {mounted ? (
               <Image
-                src="/images/book.png"
+                src="/images/book.jpg"
                 alt="The Ultimate DAO Handbook"
                 fallbackSrc="/images/fallback.svg"
                 objectFit="cover"

@@ -10,7 +10,6 @@ import {
   MenuItem,
   useDisclosure,
   Container,
-  Image,
   InputGroup,
   Input,
   InputRightElement,
@@ -19,7 +18,7 @@ import {
 import { HamburgerIcon, CloseIcon, SearchIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 // Define navigation links
 const Links = [
@@ -27,20 +26,6 @@ const Links = [
   { name: 'Resources', href: '/resources' },
   { name: 'Blog', href: '/blog' },
 ];
-
-// Client-side only rotating logo component
-const RotatingLogo = dynamic(() => Promise.resolve(() => {
-  // Use the GIF logo from branding folder
-  return (
-    <Image
-      src="./branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
-      alt="DAO Watch Logo"
-      width={40}
-      height={40}
-      style={{ marginRight: "10px" }}
-    />
-  );
-}), { ssr: false });
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -73,7 +58,14 @@ export default function Header() {
                 justifyContent="center"
               >
                 {mounted ? (
-                  <RotatingLogo />
+                  <Image
+                    src="/images/logo.png"
+                    alt="DAO Watch"
+                    width={160}
+                    height={60}
+                    priority
+                    style={{ width: 'auto', height: '100%', objectFit: 'contain' }}
+                  />
                 ) : (
                   <Skeleton w="100%" h="100%" />
                 )}

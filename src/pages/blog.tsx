@@ -315,7 +315,12 @@ export default function Blog() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1, duration: 0.5 }}
                     >
-                      <Link href={post.link} target="_blank" rel="noopener noreferrer">
+                      <Link
+                        href={post.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Read ${post.title} on Medium`}
+                      >
                         <Box 
                           borderRadius="xl" 
                           overflow="hidden" 

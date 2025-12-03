@@ -13,7 +13,7 @@ const BookPromo = dynamic(() => import('../components/BookPromo'), { ssr: false 
 
 const SectionSkeleton = ({ title }: { title: string }) => (
   <Box py={{ base: 12, md: 20 }} bg="brand.black">
-    <Container maxW="container.xl" aria-label={`${title} placeholder`}>
+    <Container maxW="container.xl">
       <Skeleton height="32px" width="220px" mb={6} />
       <SkeletonText noOfLines={4} spacing={4} />
     </Container>
