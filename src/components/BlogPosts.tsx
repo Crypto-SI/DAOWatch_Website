@@ -9,7 +9,6 @@ import {
   Flex,
   Stack,
   Tag,
-  useColorModeValue,
   Spinner,
   Center,
   IconButton,
@@ -20,6 +19,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { keyframes } from '@emotion/react';
+import { BlogPost, fetchMediumPosts } from '../lib/medium';
+import { BLOG_IMAGE_FALLBACK } from '../lib/media';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -69,20 +70,7 @@ const cardHoverVariants = {
   }
 };
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  image: string;
-  excerpt: string;
-  date: string;
-  author: string;
-  link: string;
-  tags: string[];
-}
-
 export default function BlogPosts() {
-  const cardBg = useColorModeValue('white', 'gray.800');
   // Use client-side rendering to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -95,60 +83,11 @@ export default function BlogPosts() {
   useEffect(() => {
     setMounted(true);
     
-    const fetchMediumPosts = async () => {
+    const loadMediumPosts = async () => {
       try {
         setLoading(true);
-        // Using the RSS feed approach since Medium doesn't have a public API
-        // We're using a CORS proxy to avoid CORS issues
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@cryptosixxx');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch Medium posts');
-        }
-        
-        const data = await response.json();
-        
-        // Filter posts that have the DAOWATCH tag/category
-        const filteredPosts = data.items
-          .filter((item: any) => {
-            // Check if the content includes #DAOWATCH
-            return item.content.includes('#DAOWATCH') || 
-                   item.categories.some((category: string) => 
-                     category.toLowerCase() === 'daowatch' || 
-                     category.toLowerCase() === '#daowatch'
-                   );
-          })
-          .slice(0, 6) // Limit to 6 most recent posts
-          .map((item: any, index: number) => {
-            // Extract first image from content or use fallback
-            const imgRegex = /<img[^>]+src="([^">]+)"/;
-            const imgMatch = item.content.match(imgRegex);
-            const image = imgMatch ? imgMatch[1] : '/images/placeholder.jpg';
-            
-            // Create excerpt by stripping HTML and limiting to 150 chars
-            const excerpt = item.content
-              .replace(/<[^>]*>?/gm, '')
-              .substring(0, 150) + '...';
-            
-            // Create slug from title
-            const slug = item.title.toLowerCase()
-              .replace(/[^\w\s]/gi, '')
-              .replace(/\s+/g, '-');
-            
-            return {
-              id: index.toString(),
-              title: item.title,
-              slug: slug,
-              image: image,
-              excerpt: excerpt,
-              date: item.pubDate,
-              author: item.author,
-              link: item.link,
-              tags: item.categories.length > 0 ? item.categories.slice(0, 3) : ['DAO']
-            };
-          });
-        
-        setPosts(filteredPosts);
+        const latestPosts = await fetchMediumPosts(6);
+        setPosts(latestPosts.map((post) => ({ ...post, tags: post.tags.slice(0, 3) })));
       } catch (err) {
         console.error('Error fetching Medium posts:', err);
         setError("Failed to load blog posts. Please try again later.");
@@ -157,7 +96,7 @@ export default function BlogPosts() {
       }
     };
 
-    fetchMediumPosts();
+    loadMediumPosts();
   }, []);
 
   // Calculate visible posts based on current page
@@ -322,7 +261,7 @@ export default function BlogPosts() {
                           objectFit="cover"
                           width="100%"
                           height="100%"
-                          fallbackSrc="/images/placeholder.jpg"
+                          fallbackSrc={BLOG_IMAGE_FALLBACK}
                         />
                       ) : (
                         <Box width="100%" height="100%" bg="gray.200" />

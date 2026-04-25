@@ -21,30 +21,24 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import arweaveConfig from '../utils/arweave-config.mjs';
+import {
+  DEFAULT_EPISODES_PLAYLIST_ID,
+  Episode,
+  fallbackEpisodes,
+  fetchEpisodes,
+} from '../lib/youtube';
+import { VIDEO_IMAGE_FALLBACK } from '../lib/media';
 
 // Create motion components
 const MotionBox = motion.create(Box);
 const MotionHeading = motion.create(Heading);
 const MotionText = motion.create(Text);
-const MotionFlex = motion.create(Flex);
-
 // Define animation keyframes
 const gradientShift = keyframes`
   0% { background-position: 0% 50% }
   50% { background-position: 100% 50% }
   100% { background-position: 0% 50% }
 `;
-
-interface Episode {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  videoId: string;
-  publishedAt: string;
-}
 
 export default function Episodes() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -53,112 +47,24 @@ export default function Episodes() {
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [sampleMode, setSampleMode] = useState(false);
   const episodesPerPage = 3; // Show 3 episodes per page
   
   // Use environment variable for API key - don't hardcode for GitHub
   const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '';
-  const playlistId = process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || 'PLmFN-F-XHywbuA_JAhE5zcTGtUH44VC3w';
+  const playlistId = process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || DEFAULT_EPISODES_PLAYLIST_ID;
   
   // Fetch episodes from the YouTube API
-  const fetchEpisodes = useCallback(async () => {
+  const loadEpisodes = useCallback(async () => {
     setLoading(true);
     
     try {
-      // Check if API key is available
-      if (!apiKey) {
-        console.log('YouTube API key not available, showing sample content');
-        setLoading(false);
-        setError("YouTube API key not configured. Showing sample content.");
-        setSampleMode(true);
-        return;
-      }
-      
-      const maxResults = 12; // Fetch up to 12 episodes but display fewer
-      
-      // Proxy the request through a CORS proxy if needed
-      const response = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${maxResults}&playlistId=${playlistId}&key=${apiKey}`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch episodes');
-      }
-      
-      const data = await response.json();
-      
-      // Transform the data into our Episode interface
-      const fetchedEpisodes = data.items.map((item: any) => {
-        const snippet = item.snippet;
-        return {
-          id: item.id,
-          title: snippet.title,
-          description: snippet.description,
-          thumbnail: snippet.thumbnails.high?.url || snippet.thumbnails.medium?.url || snippet.thumbnails.default?.url,
-          videoId: snippet.resourceId.videoId,
-          publishedAt: snippet.publishedAt
-        };
-      });
-      
+      const { episodes: fetchedEpisodes, warning } = await fetchEpisodes(apiKey, playlistId);
       setEpisodes(fetchedEpisodes);
+      setError(warning || "");
     } catch (err) {
       console.error('Error fetching YouTube playlist:', err);
-      
-      // For demo purposes, create some fallback episodes if API fails
-      const fallbackEpisodes = [
-        {
-          id: "1",
-          title: "Introduction to DAOWatch: Understanding Decentralized Autonomous Organizations",
-          description: "In this inaugural episode, we explore the fundamentals of DAOs and why they matter.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example1",
-          publishedAt: "2023-01-15T00:00:00Z"
-        },
-        {
-          id: "2",
-          title: "DAO Governance Models: Comparing Different Approaches",
-          description: "We analyze various governance structures in the DAO ecosystem.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example2",
-          publishedAt: "2023-02-01T00:00:00Z"
-        },
-        {
-          id: "3",
-          title: "The Future of DAOs in DeFi",
-          description: "Exploring how DAOs are revolutionizing decentralized finance.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example3",
-          publishedAt: "2023-02-15T00:00:00Z"
-        },
-        {
-          id: "4",
-          title: "DAOs and Legal Frameworks",
-          description: "Understanding the legal challenges and solutions for DAOs.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example4",
-          publishedAt: "2023-03-01T00:00:00Z"
-        },
-        {
-          id: "5",
-          title: "Building Community Through DAOs",
-          description: "How DAOs can foster strong, engaged communities.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example5",
-          publishedAt: "2023-03-15T00:00:00Z"
-        },
-        {
-          id: "6",
-          title: "DAO Treasury Management Best Practices",
-          description: "Expert strategies for managing DAO treasuries effectively.",
-          thumbnail: "/images/video-placeholder.jpg",
-          videoId: "example6",
-          publishedAt: "2023-04-01T00:00:00Z"
-        }
-      ];
-      
       setEpisodes(fallbackEpisodes);
       setError("Unable to load episodes from YouTube. Showing sample content instead.");
-      setSampleMode(true);
     } finally {
       setLoading(false);
     }
@@ -168,9 +74,9 @@ export default function Episodes() {
     // Client-side check
     if (typeof window !== 'undefined') {
       setMounted(true);
-      fetchEpisodes();
+      loadEpisodes();
     }
-  }, [fetchEpisodes]);
+  }, [loadEpisodes]);
 
   // Calculate total pages
   const totalPages = Math.max(1, Math.ceil((episodes.length - 1) / episodesPerPage));
@@ -301,12 +207,14 @@ export default function Episodes() {
           <Center py={10}>
             <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
           </Center>
-        ) : error ? (
-          <Box textAlign="center" mb={6} color="yellow.300">
-            <Text>{error}</Text>
-          </Box>
         ) : (
           <>
+            {error && (
+              <Box textAlign="center" mb={6} color="yellow.300">
+                <Text>{error}</Text>
+              </Box>
+            )}
+
             {/* Featured Episode - Larger and prominent */}
             {featuredEpisode && (
               <MotionBox
@@ -361,7 +269,7 @@ export default function Episodes() {
                               objectFit="cover"
                               width="100%"
                               height="100%"
-                              fallbackSrc="/images/video-placeholder.jpg"
+                              fallbackSrc={VIDEO_IMAGE_FALLBACK}
                             />
                           ) : (
                             <Skeleton height="100%" width="100%" />
@@ -528,7 +436,7 @@ export default function Episodes() {
                             src={episode.thumbnail}
                             alt={episode.title}
                             objectFit="cover"
-                            fallbackSrc="/images/video-placeholder.jpg"
+                            fallbackSrc={VIDEO_IMAGE_FALLBACK}
                           />
                         ) : (
                           <Skeleton height="100%" width="100%" />

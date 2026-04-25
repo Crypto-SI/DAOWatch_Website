@@ -23,7 +23,7 @@ const theme = extendTheme({
   },
   fonts: {
     heading: '"DAGGERSQUARE", "Arial Black", sans-serif',
-    body: '"Century Gothic", "CenturyGothic", "AppleGothic", sans-serif',
+    body: '"Century Gothic", "CenturyGothic", "AppleGothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
   styles: {
     global: {

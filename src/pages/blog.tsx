@@ -25,6 +25,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
+import { BlogPost, fetchMediumPosts } from '../lib/medium';
+import { BLOG_IMAGE_FALLBACK } from '../lib/media';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -39,18 +41,6 @@ const MotionHeading = motion.create(Heading);
 const MotionText = motion.create(Text);
 const MotionFlex = motion.create(Flex);
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  date: string;
-  author: string;
-  image: string;
-  link: string;
-  tags: string[];
-}
-
 export default function Blog() {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -64,59 +54,11 @@ export default function Blog() {
   useEffect(() => {
     setIsMounted(true);
     
-    const fetchMediumPosts = async () => {
+    const loadMediumPosts = async () => {
       try {
         setLoading(true);
-        // Using the RSS feed approach since Medium doesn't have a public API
-        // We're using a CORS proxy to avoid CORS issues
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@cryptosixxx');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch Medium posts');
-        }
-        
-        const data = await response.json();
-        
-        // Filter posts that have the DAOWATCH tag/category
-        const filteredPosts = data.items
-          .filter((item: any) => {
-            // Check if the content includes #DAOWATCH
-            return item.content.includes('#DAOWATCH') || 
-                   item.categories.some((category: string) => 
-                     category.toLowerCase() === 'daowatch' || 
-                     category.toLowerCase() === '#daowatch'
-                   );
-          })
-          .map((item: any, index: number) => {
-            // Extract first image from content or use fallback
-            const imgRegex = /<img[^>]+src="([^">]+)"/;
-            const imgMatch = item.content.match(imgRegex);
-            const image = imgMatch ? imgMatch[1] : '/images/placeholder.jpg';
-            
-            // Create excerpt by stripping HTML and limiting to 150 chars
-            const excerpt = item.content
-              .replace(/<[^>]*>?/gm, '')
-              .substring(0, 150) + '...';
-            
-            // Create slug from title
-            const slug = item.title.toLowerCase()
-              .replace(/[^\w\s]/gi, '')
-              .replace(/\s+/g, '-');
-            
-            return {
-              id: index.toString(),
-              title: item.title,
-              slug: slug,
-              image: image,
-              excerpt: excerpt,
-              date: item.pubDate,
-              author: item.author,
-              link: item.link,
-              tags: item.categories.length > 0 ? item.categories.slice(0, 3) : ['DAO']
-            };
-          });
-        
-        setPosts(filteredPosts);
+        const mediumPosts = await fetchMediumPosts();
+        setPosts(mediumPosts.map((post) => ({ ...post, tags: post.tags.slice(0, 3) })));
       } catch (err) {
         console.error('Error fetching Medium posts:', err);
         setError("Failed to load blog posts. Please try again later.");
@@ -125,7 +67,7 @@ export default function Blog() {
       }
     };
 
-    fetchMediumPosts();
+    loadMediumPosts();
   }, []);
 
   // Filter posts based on search term
@@ -347,7 +289,7 @@ export default function Blog() {
                             <Image
                               src={post.image}
                               alt={post.title}
-                              fallbackSrc="/images/placeholder.jpg"
+                              fallbackSrc={BLOG_IMAGE_FALLBACK}
                               objectFit="cover"
                               width="100%"
                               height="100%"

@@ -14,12 +14,11 @@ import {
   Center,
   Spinner
 } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { keyframes } from '@emotion/react';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import arweaveConfig from '../utils/arweave-config.mjs';
+import { fetchPlaylists, Playlist, YOUTUBE_CHANNEL_URL } from '../lib/youtube';
+import { VIDEO_IMAGE_FALLBACK } from '../lib/media';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -33,21 +32,6 @@ const MotionHeading = motion.create(Heading);
 const MotionText = motion.create(Text);
 const MotionBox = motion.create(Box);
 
-interface Playlist {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  url: string;
-}
-
-// Playlist IDs to fetch information for
-const PLAYLIST_IDS = [
-  'PLmFN-F-XHywb_fpyMN1ssv6-PswnqnT9b',
-  'PLmFN-F-XHywaJ3z1buFymsszBtsWEuXVF',
-  'PLmFN-F-XHywYSIC4QUvfpDi4zB-0aKYs8'
-];
-
 // Use environment variable for API key - don't hardcode for GitHub
 const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '';
 
@@ -55,7 +39,6 @@ export default function Videos() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState(0);
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -66,124 +49,21 @@ export default function Videos() {
 
     setMounted(true);
     
-    const fetchPlaylists = async () => {
+    const loadPlaylists = async () => {
       try {
         setLoading(true);
-        
-        // Fetch playlist details from the YouTube API
-        const fetchPlaylistDetails = async (playlistId: string) => {
-          try {
-            // Check if API key is available
-            if (!apiKey) {
-              console.log('YouTube API key not available, showing placeholder content');
-              return {
-                id: playlistId,
-                title: "DAO Watch Playlist",
-                description: "YouTube API key not configured. Please visit our YouTube channel directly.",
-                thumbnail: "/images/video-placeholder.jpg",
-                url: `https://www.youtube.com/playlist?list=${playlistId}`
-              };
-            }
-            
-            // Continue with API fetch if key exists
-            const response = await fetch(
-              `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`
-            );
-            
-            if (!response.ok) {
-              throw new Error(`Failed to fetch playlist data for ${playlistId}`);
-            }
-            
-            const data = await response.json();
-            
-            if (!data.items || data.items.length === 0) {
-              throw new Error(`No playlist found with ID: ${playlistId}`);
-            }
-            
-            const playlist = data.items[0];
-            const snippet = playlist.snippet;
-            
-            // Then, get the first video from the playlist to use its thumbnail
-            const playlistItemsResponse = await fetch(
-              `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1&playlistId=${playlistId}&key=${apiKey}`
-            );
-            
-            if (!playlistItemsResponse.ok) {
-              throw new Error(`Failed to fetch playlist items for ${playlistId}`);
-            }
-            
-            const playlistItemsData = await playlistItemsResponse.json();
-            let thumbnail = '/images/video-placeholder.jpg';
-            
-            // If we have items, get the thumbnail of the first video
-            if (playlistItemsData.items && playlistItemsData.items.length > 0) {
-              const videoId = playlistItemsData.items[0].snippet.resourceId.videoId;
-              // Use high-quality thumbnail
-              thumbnail = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-            }
-            
-            return {
-              id: playlist.id,
-              title: snippet.title,
-              description: snippet.description || 'Explore our curated playlist of DAO-related content.',
-              thumbnail: thumbnail,
-              url: `https://www.youtube.com/playlist?list=${playlistId}`
-            };
-          } catch (err) {
-            console.error(`Error fetching playlist details for ${playlistId}:`, err);
-            return {
-              id: playlistId,
-              title: "DAO Watch Playlist",
-              description: "Failed to load playlist details. Please visit our YouTube channel directly.",
-              thumbnail: "/images/video-placeholder.jpg",
-              url: `https://www.youtube.com/playlist?list=${playlistId}`
-            };
-          }
-        };
-        
-        // Fetch data for each playlist
-        const playlistsData = await Promise.all(
-          PLAYLIST_IDS.map(async (playlistId) => {
-            const playlistDetails = await fetchPlaylistDetails(playlistId);
-            return playlistDetails;
-          })
-        );
-        
+        const { playlists: playlistsData, warning } = await fetchPlaylists(apiKey);
         setPlaylists(playlistsData);
+        setError(warning || null);
       } catch (err) {
         console.error('Error fetching playlists:', err);
         setError('Failed to load playlist data. Please try again later.');
-        
-        // Fallback playlists if API call fails
-        setPlaylists([
-          {
-            id: '1',
-            title: 'DAO Governance Deep Dives',
-            description: 'Explore the intricacies of decentralized governance, voting mechanisms, and how DAOs make decisions in a trustless environment.',
-            thumbnail: '/images/video-placeholder.jpg',
-            url: `https://www.youtube.com/playlist?list=${PLAYLIST_IDS[0]}`
-          },
-          {
-            id: '2',
-            title: 'DAO Technical Implementation',
-            description: 'Dive into the technical aspects of DAO development including smart contract architecture, security considerations, and treasury management tools.',
-            thumbnail: '/images/video-placeholder.jpg',
-            url: `https://www.youtube.com/playlist?list=${PLAYLIST_IDS[1]}`
-          },
-          {
-            id: '3',
-            title: 'DAO Treasury & Token Economics',
-            description: 'Understanding the financial fundamentals of DAOs - from treasury diversification and token models to economic incentives for long-term sustainability.',
-            thumbnail: '/images/video-placeholder.jpg',
-            url: `https://www.youtube.com/playlist?list=${PLAYLIST_IDS[2]}`
-          }
-        ]);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchPlaylists();
+    loadPlaylists();
   }, []);
 
   // Skip rendering until client-side
@@ -312,7 +192,7 @@ export default function Videos() {
                     position="absolute"
                     top="0"
                     left="0"
-                        fallbackSrc="/images/video-placeholder.jpg"
+                        fallbackSrc={VIDEO_IMAGE_FALLBACK}
                         onError={(e) => {
                           // If the high-res thumbnail fails, try a lower resolution one
                           const img = e.target as HTMLImageElement;
@@ -372,7 +252,7 @@ export default function Videos() {
         )}
 
         <Flex justify="center" mt={16}>
-          <a href="https://www.youtube.com/@smartreach5326" target="_blank" rel="noopener noreferrer">
+          <a href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
             <Button
               colorScheme="red"
               size="lg"

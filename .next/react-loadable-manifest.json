@@ -1,26 +1,26 @@
 {
   "pages/index.tsx -> ../components/BookPromo": {
-    "id": 3038,
+    "id": "pages/index.tsx -> ../components/BookPromo",
     "files": [
-      "static/chunks/38.b152af6bd7a65c69.js"
+      "static/chunks/_pages-dir-browser_src_components_BookPromo_tsx.js"
     ]
   },
   "pages/index.tsx -> ../components/Community": {
-    "id": 1228,
+    "id": "pages/index.tsx -> ../components/Community",
     "files": [
-      "static/chunks/228.7cdd1c03db144218.js"
+      "static/chunks/_pages-dir-browser_src_components_Community_tsx.js"
     ]
   },
   "pages/index.tsx -> ../components/Episodes": {
-    "id": 2727,
+    "id": "pages/index.tsx -> ../components/Episodes",
     "files": [
-      "static/chunks/727.cdeb0b5a5cbe3d8b.js"
+      "static/chunks/_pages-dir-browser_src_components_Episodes_tsx.js"
     ]
   },
   "pages/index.tsx -> ../components/Videos": {
-    "id": 4884,
+    "id": "pages/index.tsx -> ../components/Videos",
     "files": [
-      "static/chunks/884.b6c33ea26f67e28f.js"
+      "static/chunks/_pages-dir-browser_src_components_Videos_tsx.js"
     ]
   }
 }

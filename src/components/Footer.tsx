@@ -54,12 +54,12 @@ export default function Footer() {
             >
               <Box boxSize={{ base: "40px", md: "50px" }}>
                 <Image
-                  src="./branding/rotatinglogos/GIF-1(Black)-DAO-Watch-logo-version-1-(cryptosi).gif"
-                  alt="Animated DAO Watch logomark in monochrome palette"
+                  src="/images/logo-160.webp"
+                  alt="DAO Watch logomark"
                   objectFit="contain"
                   w="100%"
                   h="100%"
-                  fallbackSrc="./images/fallback.svg"
+                  fallbackSrc="/images/fallback.svg"
                   loading="lazy"
                   decoding="async"
                 />
@@ -70,17 +70,17 @@ export default function Footer() {
               providing resources, news, and insights on the future of collaborative governance.
             </Text>
             <Stack direction="row" spacing={6}>
-              <Link href="https://twitter.com/Crypto_SI" isExternal>
-                <Icon as={FaTwitter} w={5} h={5} />
+              <Link href="https://twitter.com/Crypto_SI" isExternal aria-label="DAO Watch on Twitter">
+                <Icon as={FaTwitter} w={5} h={5} aria-hidden="true" />
               </Link>
-              <Link href="https://github.com/Crypto-SI" isExternal>
-                <Icon as={FaGithub} w={5} h={5} />
+              <Link href="https://github.com/Crypto-SI" isExternal aria-label="DAO Watch on GitHub">
+                <Icon as={FaGithub} w={5} h={5} aria-hidden="true" />
               </Link>
-              <Link href="https://linkedin.com/" isExternal>
-                <Icon as={FaLinkedin} w={5} h={5} />
+              <Link href="https://linkedin.com/" isExternal aria-label="DAO Watch on LinkedIn">
+                <Icon as={FaLinkedin} w={5} h={5} aria-hidden="true" />
               </Link>
-              <Link href="https://discord.gg/" isExternal>
-                <Icon as={FaDiscord} w={5} h={5} />
+              <Link href="https://discord.gg/" isExternal aria-label="DAO Watch on Discord">
+                <Icon as={FaDiscord} w={5} h={5} aria-hidden="true" />
               </Link>
             </Stack>
           </Stack>
@@ -101,9 +101,9 @@ export default function Footer() {
           </Stack>
           <Stack align="flex-start">
             <ListHeader>Legal</ListHeader>
-            <Link href="#">Terms of Service</Link>
-            <Link href="#">Privacy Policy</Link>
-            <Link href="#">Cookie Policy</Link>
+            <Text color="whiteAlpha.900">Terms of Service</Text>
+            <Text color="whiteAlpha.900">Privacy Policy</Text>
+            <Text color="whiteAlpha.900">Cookie Policy</Text>
           </Stack>
         </SimpleGrid>
       </Container>
@@ -118,9 +118,14 @@ export default function Footer() {
             align={{ base: 'center', md: 'center' }}
           >
             <Text>© {currentYear} DAO Watch. All rights reserved.</Text>
-            <Text mt={{ base: 2, md: 0 }}>
-              Made with ❤️ for the DAO community
-            </Text>
+            <Link href="https://webarastudio.com" isExternal mt={{ base: 2, md: 0 }}>
+              <Image
+                src="/images/webarabadge.png"
+                alt="Made by Webara Studio"
+                h="40px"
+                objectFit="contain"
+              />
+            </Link>
           </Flex>
         </Container>
       </Box>

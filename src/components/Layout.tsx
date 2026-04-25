@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
       minH="100vh"
     >
       <Header />
-      <Box flex="1" width="100%">
+      <Box as="main" id="main-content" flex="1" width="100%">
         {children}
       </Box>
       <Footer />

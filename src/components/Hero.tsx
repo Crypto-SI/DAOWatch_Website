@@ -8,8 +8,7 @@ import {
   Flex
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import NextLink from 'next/link';
 
 // Define animation keyframes
 const gradientShift = keyframes`
@@ -19,12 +18,6 @@ const gradientShift = keyframes`
 `;
 
 export default function Hero() {
-  const [isMounted, setIsMounted] = useState(false);
-  
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
     <Box 
       bg="brand.black" 
@@ -44,7 +37,7 @@ export default function Hero() {
         opacity="0.15"
         bgGradient="linear(to-br, #3d79fb, #000000, #3d79fb)"
         backgroundSize="200% 200%"
-        animation={isMounted ? `${gradientShift} 15s ease infinite` : "none"}
+        animation={`${gradientShift} 15s ease infinite`}
         sx={{
           "&::before": {
             content: '""',
@@ -70,9 +63,7 @@ export default function Hero() {
         borderRadius="full"
         bgGradient="radial(circle at center, rgba(61, 121, 251, 0.4) 0%, transparent 70%)"
         filter="blur(40px)"
-        opacity={isMounted ? "0.6" : "0"}
-        transition="opacity 1s ease-in-out"
-        transform={isMounted ? "translateY(0)" : "translateY(20px)"}
+        opacity="0.6"
       />
       
       <Box
@@ -84,9 +75,7 @@ export default function Hero() {
         borderRadius="full"
         bgGradient="radial(circle at center, rgba(107, 70, 193, 0.4) 0%, transparent 70%)"
         filter="blur(30px)"
-        opacity={isMounted ? "0.5" : "0"}
-        transition="opacity 1s ease-in-out, transform 1.5s ease-in-out"
-        transform={isMounted ? "translateY(0)" : "translateY(30px)"}
+        opacity="0.5"
       />
       
       <Container maxW="container.xl" position="relative" zIndex="1">
@@ -95,11 +84,17 @@ export default function Hero() {
             w={{ base: "300px", md: "500px" }} 
             maxW="100%"
             mb={{ base: 4, md: 6 }}
-            transform={isMounted ? "translateY(0)" : "translateY(20px)"}
-            opacity={isMounted ? 1 : 0}
-            transition="transform 0.8s ease-out, opacity 0.8s ease-out"
           >
             <picture>
+              <source
+                srcSet="/images/hero-1000.webp"
+                media="(min-width: 768px)"
+                type="image/webp"
+              />
+              <source
+                srcSet="/images/hero-500.webp"
+                type="image/webp"
+              />
               <source
                 srcSet="/images/hero-1000.jpg"
                 media="(min-width: 768px)"
@@ -128,9 +123,6 @@ export default function Hero() {
             maxW="4xl"
             lineHeight="1.2"
             letterSpacing="tight"
-            opacity={isMounted ? 1 : 0}
-            transform={isMounted ? "translateY(0)" : "translateY(20px)"}
-            transition="transform 0.8s ease-out 0.2s, opacity 0.8s ease-out 0.2s"
           >
             Navigate the DAO universe with trustable research, tutorials, and stories.
           </Heading>
@@ -138,9 +130,7 @@ export default function Hero() {
           <Text 
             fontSize={{ base: "xl", md: "2xl" }} 
             maxW="3xl"
-            opacity={isMounted ? "0.9" : "0"}
-            transform={isMounted ? "translateY(0)" : "translateY(20px)"}
-            transition="transform 0.8s ease-out 0.3s, opacity 0.8s ease-out 0.3s"
+            opacity="0.95"
           >
             Your comprehensive guide to Decentralized Autonomous Organizations.
             Learn, explore, and participate in the future of collaborative governance.
@@ -151,43 +141,42 @@ export default function Hero() {
             gap={4} 
             mt={8}
             w={{ base: "100%", sm: "auto" }}
-            opacity={isMounted ? 1 : 0}
-            transform={isMounted ? "translateY(0)" : "translateY(20px)"}
-            transition="transform 0.8s ease-out 0.4s, opacity 0.8s ease-out 0.4s"
           >
-            <Link href="/resources">
-              <Button
-                size="lg" 
-                rounded="full" 
-                px={8}
-                fontWeight="bold"
-                boxShadow="lg"
-                bgGradient="linear(to-r, #3d79fb, #6b46c1)"
-                _hover={{
-                  transform: "translateY(-2px)",
-                  boxShadow: "xl",
-                  bgGradient: "linear(to-r, #3d79fb, #6b46c1)",
-                  opacity: 0.9
-                }}
-              >
-                Explore DAO Governance Resources
-              </Button>
-            </Link>
-            <Link href="/blog">
-              <Button
-                size="lg" 
-                variant="outline" 
-                colorScheme="whiteAlpha" 
-                rounded="full" 
-                px={8}
-                fontWeight="bold"
-                _hover={{
-                  bg: "whiteAlpha.200",
-                }}
-              >
-                Read the DAO Watch Blog
-              </Button>
-            </Link>
+            <Button
+              as={NextLink}
+              href="/resources"
+              size="lg"
+              rounded="full"
+              px={8}
+              fontWeight="bold"
+              boxShadow="lg"
+              bgGradient="linear(to-r, #3d79fb, #6b46c1)"
+              _hover={{
+                transform: "translateY(-2px)",
+                boxShadow: "xl",
+                bgGradient: "linear(to-r, #3d79fb, #6b46c1)",
+                opacity: 0.9,
+                textDecoration: "none"
+              }}
+            >
+              Explore DAO Governance Resources
+            </Button>
+            <Button
+              as={NextLink}
+              href="/blog"
+              size="lg"
+              variant="outline"
+              colorScheme="whiteAlpha"
+              rounded="full"
+              px={8}
+              fontWeight="bold"
+              _hover={{
+                bg: "whiteAlpha.200",
+                textDecoration: "none"
+              }}
+            >
+              Read the DAO Watch Blog
+            </Button>
           </Flex>
         </VStack>
       </Container>

@@ -1,4 +1,4 @@
-import { Box, Container, Skeleton, SkeletonText } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import Layout from '../components/Layout';
 import Hero from '../components/Hero';
@@ -13,11 +13,14 @@ const Community = dynamic(() => import('../components/Community'), { ssr: false 
 const Videos = dynamic(() => import('../components/Videos'), { ssr: false });
 const BookPromo = dynamic(() => import('../components/BookPromo'), { ssr: false });
 
-const SectionSkeleton = ({ title }: { title: string }) => (
+const SectionSkeleton = () => (
   <Box py={{ base: 12, md: 20 }} bg="brand.black">
     <Container maxW="container.xl">
-      <Skeleton height="32px" width="220px" mb={6} />
-      <SkeletonText noOfLines={4} spacing={4} />
+      <Box height="32px" width="220px" mb={6} bg="whiteAlpha.300" borderRadius="md" />
+      <Box height="8px" mb={4} bg="whiteAlpha.200" borderRadius="full" />
+      <Box height="8px" mb={4} bg="whiteAlpha.200" borderRadius="full" />
+      <Box height="8px" mb={4} bg="whiteAlpha.200" borderRadius="full" />
+      <Box height="8px" width="70%" bg="whiteAlpha.200" borderRadius="full" />
     </Container>
   </Box>
 );
@@ -66,16 +69,16 @@ export default function Home() {
         {/* <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
           <BlogPosts />
         </LazySection> */}
-        <LazySection placeholder={<SectionSkeleton title="Recent Episodes" />}>
+        <LazySection placeholder={<SectionSkeleton />}>
           <Episodes />
         </LazySection>
-        <LazySection placeholder={<SectionSkeleton title="Community Highlights" />}>
+        <LazySection placeholder={<SectionSkeleton />}>
           <Community />
         </LazySection>
-        <LazySection placeholder={<SectionSkeleton title="DAO Watch Videos" />}>
+        <LazySection placeholder={<SectionSkeleton />}>
           <Videos />
         </LazySection>
-        <LazySection placeholder={<SectionSkeleton title="Book Promotion" />}>
+        <LazySection placeholder={<SectionSkeleton />}>
           <BookPromo />
         </LazySection>
         <HomeNarrative />

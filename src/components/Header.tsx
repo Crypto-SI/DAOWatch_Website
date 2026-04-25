@@ -13,11 +13,9 @@ import {
   InputGroup,
   Input,
   InputRightElement,
-  Skeleton,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, SearchIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 // Define navigation links
@@ -31,11 +29,6 @@ const Links = [
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <Box
@@ -50,7 +43,7 @@ export default function Header() {
       <Container maxW="container.xl">
         <Flex alignItems="center" justifyContent="space-between">
           <Flex alignItems="center">
-            <Link href="/">
+            <Link href="/" aria-label="DAO Watch home">
               <Box 
                 w={{ base: "280px", md: "400px" }} 
                 h={{ base: "70px", md: "100px" }} 
@@ -59,18 +52,14 @@ export default function Header() {
                 alignItems="center"
                 justifyContent="center"
               >
-                {mounted ? (
-                  <Image
-                    src="/images/logo.png"
-                    alt="DAO Watch"
-                    width={160}
-                    height={60}
-                    priority
-                    style={{ width: 'auto', height: '100%', objectFit: 'contain' }}
-                  />
-                ) : (
-                  <Skeleton w="100%" h="100%" />
-                )}
+                <Image
+                  src="/images/logo-160.webp"
+                  alt="DAO Watch"
+                  width={160}
+                  height={60}
+                  loading="eager"
+                  style={{ width: 'auto', height: '100%', objectFit: 'contain' }}
+                />
               </Box>
             </Link>
           </Flex>
@@ -99,9 +88,16 @@ export default function Header() {
           <Flex alignItems="center">
             <Box display={{ base: 'none', md: 'block' }} mr={4}>
               <InputGroup size="sm">
-                <Input placeholder="Search for:" borderRadius="md" bg="whiteAlpha.200" color="white" _placeholder={{ color: "whiteAlpha.600" }} />
+                <Input
+                  aria-label="Search DAO Watch"
+                  placeholder="Search for:"
+                  borderRadius="md"
+                  bg="whiteAlpha.200"
+                  color="white"
+                  _placeholder={{ color: "whiteAlpha.800" }}
+                />
                 <InputRightElement>
-                  <SearchIcon color="whiteAlpha.700" />
+                  <SearchIcon color="whiteAlpha.900" />
                 </InputRightElement>
               </InputGroup>
             </Box>

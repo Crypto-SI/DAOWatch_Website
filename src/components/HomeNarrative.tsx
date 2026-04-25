@@ -9,6 +9,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
+const accessibleLinkColor = '#6EA8FF';
+
 const descriptiveLinks = [
   {
     href: '/resources',
@@ -43,11 +45,11 @@ export default function HomeNarrative() {
           <Text>
             Every week we review proposals from major networks and highlight the strategies that lead to higher 
             contributor participation or faster incident response. Those insights flow into our{' '}
-            <ChakraLink as={NextLink} href="/resources" textDecoration="underline" color="brand.blue">
+            <ChakraLink as={NextLink} href="/resources" textDecoration="underline" color={accessibleLinkColor}>
               DAO governance resource library
             </ChakraLink>{' '}
             so new contributors can quickly upskill. We also summarize critical protocol votes inside{' '}
-            <ChakraLink as={NextLink} href="/episodes" textDecoration="underline" color="brand.blue">
+            <ChakraLink as={NextLink} href="/episodes" textDecoration="underline" color={accessibleLinkColor}>
               long-form DAO Watch episodes
             </ChakraLink>{' '}
             that double as case studies for your next governance sprint. Each episode closes with a readiness rubric 
@@ -55,7 +57,7 @@ export default function HomeNarrative() {
           </Text>
           <Text>
             For teams that prefer video or async recaps, the{' '}
-            <ChakraLink as={NextLink} href="/videos" textDecoration="underline" color="brand.blue">
+            <ChakraLink as={NextLink} href="/videos" textDecoration="underline" color={accessibleLinkColor}>
               bite-sized video debriefs
             </ChakraLink>{' '}
             deliver concise takeaways you can share with leadership or community members. We intentionally 
@@ -82,7 +84,7 @@ export default function HomeNarrative() {
               </Heading>
               <Text>
                 Visit our{' '}
-                <ChakraLink as={NextLink} href={href} color="brand.blue" fontWeight="bold">
+                <ChakraLink as={NextLink} href={href} color={accessibleLinkColor} fontWeight="bold">
                   {text}
                 </ChakraLink>{' '}
                 to explore curated media, partner spotlights, and actionable checklists tailored for DAO operators.

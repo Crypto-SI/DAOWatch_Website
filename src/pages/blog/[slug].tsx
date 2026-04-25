@@ -20,19 +20,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { useState, useEffect } from 'react';
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  author: string;
-  image: string;
-  link: string;
-  tags: string[];
-}
+import { BlogPost, fetchMediumPostBySlug, stripHtml } from '../../lib/medium';
+import { BLOG_IMAGE_FALLBACK } from '../../lib/media';
 
 interface BlogPostProps {
   slug: string;
@@ -74,58 +63,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        
-        // Fetch all posts from Medium
-        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@cryptosixxx');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch Medium posts');
-        }
-        
-        const data = await response.json();
-        
-        // Filter to find the specific post that matches the slug
-        const allPosts = data.items
-          .filter((item: any) => {
-            // Check if the content includes #DAOWATCH
-            return item.content.includes('#DAOWATCH') || 
-                   item.categories.some((category: string) => 
-                     category.toLowerCase() === 'daowatch' || 
-                     category.toLowerCase() === '#daowatch'
-                   );
-          })
-          .map((item: any, index: number) => {
-            // Extract first image from content or use fallback
-            const imgRegex = /<img[^>]+src="([^">]+)"/;
-            const imgMatch = item.content.match(imgRegex);
-            const image = imgMatch ? imgMatch[1] : '/images/placeholder.jpg';
-            
-            // Create excerpt by stripping HTML and limiting to 150 chars
-            const excerpt = item.content
-              .replace(/<[^>]*>?/gm, '')
-              .substring(0, 150) + '...';
-            
-            // Create slug from title
-            const postSlug = item.title.toLowerCase()
-              .replace(/[^\w\s]/gi, '')
-              .replace(/\s+/g, '-');
-            
-            return {
-              id: index.toString(),
-              title: item.title,
-              slug: postSlug,
-              excerpt: excerpt,
-              content: item.content,
-              date: item.pubDate,
-              author: item.author,
-              image: image,
-              link: item.link,
-              tags: item.categories.length > 0 ? item.categories : ['DAO']
-            };
-          });
-        
-        // Find the post with the matching slug
-        const foundPost = allPosts.find((p: BlogPost) => p.slug === slug);
+        const foundPost = await fetchMediumPostBySlug(slug);
         setPost(foundPost || null);
       } catch (err) {
         console.error('Error fetching blog post:', err);
@@ -144,7 +82,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
   const metaTitle = `${baseTitle} | DAO Watch`;
   const metaDescription =
     post?.excerpt ||
-    fallbackData?.content?.replace(/<[^>]*>?/gm, '').slice(0, 140) ||
+    (fallbackData?.content ? stripHtml(fallbackData.content).slice(0, 140) : '') ||
     'DAO Watch article';
   const canonicalUrl = slug ? `https://daowatch.io/blog/${slug}` : 'https://daowatch.io/blog';
   const structuredData = post
@@ -219,7 +157,7 @@ export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
           w="100%"
           h={{ base: "300px", md: "400px" }}
           objectFit="cover"
-          fallbackSrc="/images/placeholder.jpg"
+          fallbackSrc={BLOG_IMAGE_FALLBACK}
         />
       </Box>
       
@@ -380,7 +318,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     content: '<p>This content is generated statically. Updated content will be loaded client-side if available.</p>',
     date: new Date().toISOString(),
     author: 'DAO Watch Team',
-    image: '/images/placeholder.jpg',
+    image: BLOG_IMAGE_FALLBACK,
     tags: ['DAO', 'Web3'],
   };
 

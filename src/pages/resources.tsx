@@ -14,8 +14,7 @@ import {
   HStack,
   Icon,
   Divider,
-  Flex,
-  useBreakpointValue
+  Flex
 } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import PageHead from '../components/PageHead';

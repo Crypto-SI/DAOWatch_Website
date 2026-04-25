@@ -9,9 +9,16 @@ export default function Document() {
         <link
           rel="preload"
           as="image"
-          href="/images/hero.jpg"
-          type="image/jpeg"
-          imageSrcSet="/images/hero.jpg 1x"
+          href="/images/hero-500.webp"
+          type="image/webp"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-1000.webp"
+          type="image/webp"
+          media="(min-width: 768px)"
         />
       </Head>
       <body>
