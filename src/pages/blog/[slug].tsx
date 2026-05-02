@@ -1,17 +1,15 @@
-import { 
-  Box, 
-  Container, 
-  Heading, 
-  Text, 
-  Image, 
-  Tag, 
-  VStack, 
-  HStack, 
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Image,
+  Tag,
+  VStack,
+  HStack,
   Flex,
   Button,
   Divider,
-  Center,
-  Spinner
 } from '@chakra-ui/react';
 import Layout from '../../components/Layout';
 import PageHead from '../../components/PageHead';
@@ -19,313 +17,241 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { GetStaticProps, GetStaticPaths } from 'next';
-import { useState, useEffect } from 'react';
-import { BlogPost, fetchMediumPostBySlug, stripHtml } from '../../lib/medium';
+import { client } from '../../sanity/client';
+import { postBySlugQuery, allPostSlugsQuery } from '../../sanity/queries';
+import { PortableText } from '@portabletext/react';
+import type { PortableTextBlock } from '@portabletext/types';
+import { portableTextComponents } from '../../components/PortableTextRenderer';
 import { BLOG_IMAGE_FALLBACK } from '../../lib/media';
 
-interface BlogPostProps {
+interface SanityPostFull {
+  _id: string;
+  title: string;
   slug: string;
-  fallbackData?: {
+  excerpt: string | null;
+  body: PortableTextBlock[] | null;
+  mainImage: string | null;
+  mainImageAlt: string | null;
+  publishedAt: string;
+  author: {
+    name: string | null;
+    image: string | null;
+    slug: string | null;
+  } | null;
+  categories: Array<{
     title: string;
-    content: string;
-    date: string;
-    author: string;
-    image: string;
-    tags: string[];
-  }
+    slug: string;
+    color: string | null;
+  }> | null;
 }
 
-export default function BlogPostPage({ slug, fallbackData }: BlogPostProps) {
+interface BlogPostProps {
+  post: SanityPostFull | null;
+}
+
+export default function BlogPostPage({ post }: BlogPostProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [error, setError] = useState("");
 
-  useEffect(() => {
-    // If we have fallback data, use it immediately
-    if (fallbackData) {
-      setPost({
-        id: '0',
-        title: fallbackData.title,
-        slug: slug,
-        excerpt: '',
-        content: fallbackData.content,
-        date: fallbackData.date,
-        author: fallbackData.author,
-        image: fallbackData.image,
-        link: '',
-        tags: fallbackData.tags
-      });
-      setLoading(false);
-      return;
-    }
-
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const foundPost = await fetchMediumPostBySlug(slug);
-        setPost(foundPost || null);
-      } catch (err) {
-        console.error('Error fetching blog post:', err);
-        setError("Failed to load the blog post. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug) {
-      fetchPost();
-    }
-  }, [slug, fallbackData]);
-
-  const baseTitle = post?.title || fallbackData?.title || 'DAO Watch Article';
-  const metaTitle = `${baseTitle} | DAO Watch`;
-  const metaDescription =
-    post?.excerpt ||
-    (fallbackData?.content ? stripHtml(fallbackData.content).slice(0, 140) : '') ||
-    'DAO Watch article';
-  const canonicalUrl = slug ? `https://daowatch.io/blog/${slug}` : 'https://daowatch.io/blog';
-  const structuredData = post
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: post.title,
-        description: metaDescription,
-        author: {
-          '@type': 'Person',
-          name: post.author
-        },
-        datePublished: post.date,
-        image: post.image,
-        mainEntityOfPage: canonicalUrl,
-        publisher: {
-          '@type': 'Organization',
-          name: 'DAO Watch',
-          logo: {
-            '@type': 'ImageObject',
-            url: 'https://daowatch.io/images/logo.png'
-          }
-        }
-      }
-    : undefined;
-
-  // Show a loading state while client-side fetching is happening
-  if (loading) {
+  // If the page is a fallback (not yet generated), show loading
+  if (router.isFallback) {
     return (
       <>
-        <PageHead title={`Loading ${baseTitle} | DAO Watch`} description={metaDescription} structuredData={structuredData} />
-      <Layout>
-        <Container maxW="container.xl" py={20} textAlign="center">
-          <Center py={10}>
-            <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
-          </Center>
-        </Container>
-      </Layout>
-      </>
-    );
-  }
-
-  if (error || !post) {
-    return (
-      <>
-        <PageHead title="DAO Watch Blog | Article Not Found" description="We couldn't load the requested DAO Watch article." />
-      <Layout>
-        <Container maxW="container.xl" py={20} textAlign="center">
-          <Heading mb={6}>Blog Post Not Found</Heading>
-          <Text mb={8}>{error || "The blog post you're looking for doesn't exist."}</Text>
-          <Button
-            leftIcon={<FaArrowLeft />}
-            colorScheme="blue"
-            onClick={() => router.push('/blog')}
-          >
-            Back to Blog
-          </Button>
-        </Container>
-      </Layout>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <PageHead title={metaTitle} description={metaDescription} structuredData={structuredData} />
-    <Layout>
-      <Box w="100%">
-        <Image 
-          src={post.image} 
-          alt={post.title}
-          w="100%"
-          h={{ base: "300px", md: "400px" }}
-          objectFit="cover"
-          fallbackSrc={BLOG_IMAGE_FALLBACK}
+        <PageHead
+          title="Loading... | DAO Watch"
+          description="Loading DAO Watch article"
         />
-      </Box>
-      
-      <Container maxW="container.lg" py={10}>
-        <Link href="/blog">
-          <Button 
-            leftIcon={<FaArrowLeft />} 
-            variant="ghost" 
-            mb={8}
-          >
-            Back to Blog
-          </Button>
-        </Link>
-        
-        <VStack spacing={6} align="flex-start">
-          <Heading as="h1" size="2xl">{post.title}</Heading>
-          
-          <HStack>
-            <Text color="gray.600">
-              {new Date(post.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+        <Layout>
+          <Container maxW="container.xl" py={20} textAlign="center">
+            <Text color="white" fontSize="xl">
+              Loading...
             </Text>
-            <Text>•</Text>
-            <Text color="gray.600">{post.author}</Text>
-          </HStack>
-          
-          <Flex wrap="wrap" gap={2}>
-            {post.tags.map((tag, index) => (
-              <Tag key={`${index}-${tag}`} colorScheme="blue" size="md">
-                {tag}
-              </Tag>
-            ))}
-          </Flex>
-          
-          <Divider my={6} />
-          
-          <Box 
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-            w="100%"
-            sx={{
-              'h2': {
-                fontSize: '1.8rem',
-                fontWeight: 'bold',
-                mt: 8,
-                mb: 4,
-              },
-              'h3': {
-                fontSize: '1.4rem',
-                fontWeight: 'bold',
-                mt: 6,
-                mb: 3,
-              },
-              'p': {
-                mb: 4,
-                lineHeight: 1.8,
-              },
-              'ul, ol': {
-                pl: 6,
-                mb: 4,
-              },
-              'li': {
-                mb: 2,
-              },
-              'strong': {
-                fontWeight: 'bold',
-              },
-              'img': {
-                maxWidth: '100%',
-                height: 'auto',
-                my: 4,
-                borderRadius: 'md',
-              },
-              'a': {
-                color: 'blue.500',
-                textDecoration: 'none',
-                _hover: {
-                  textDecoration: 'underline',
-                }
-              },
-              'blockquote': {
-                borderLeftWidth: '4px',
-                borderLeftColor: 'blue.200',
-                pl: 4,
-                py: 1,
-                my: 4,
-                fontStyle: 'italic',
-                color: 'gray.700',
-              }
-            }}
-          />
-          
-          <Divider my={6} />
-          
-          <Flex justifyContent="space-between" w="100%" mt={8}>
+          </Container>
+        </Layout>
+      </>
+    );
+  }
+
+  if (!post) {
+    return (
+      <>
+        <PageHead
+          title="DAO Watch Blog | Article Not Found"
+          description="We couldn't find the requested DAO Watch article."
+        />
+        <Layout>
+          <Container maxW="container.xl" py={20} textAlign="center">
+            <Heading mb={6} color="white">
+              Blog Post Not Found
+            </Heading>
+            <Text mb={8} color="whiteAlpha.800">
+              The blog post you're looking for doesn't exist.
+            </Text>
             <Button
               leftIcon={<FaArrowLeft />}
-              colorScheme="blue"
-              variant="outline"
+              colorScheme="purple"
               onClick={() => router.push('/blog')}
             >
               Back to Blog
             </Button>
+          </Container>
+        </Layout>
+      </>
+    );
+  }
 
+  const metaTitle = `${post.title} | DAO Watch`;
+  const metaDescription =
+    post.excerpt || `Read "${post.title}" on DAO Watch`;
+  const canonicalUrl = `https://daowatch.org/blog/${post.slug}`;
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: metaDescription,
+    author: post.author
+      ? {
+          '@type': 'Person',
+          name: post.author.name,
+        }
+      : undefined,
+    datePublished: post.publishedAt,
+    image: post.mainImage,
+    mainEntityOfPage: canonicalUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: 'DAO Watch',
+      logo: {
+        '@type': 'ImageObject',
+            url: 'https://daowatch.org/images/logo.png',
+      },
+    },
+  };
+
+  return (
+    <>
+      <PageHead
+        title={metaTitle}
+        description={metaDescription}
+        structuredData={structuredData}
+      />
+      <Layout>
+        <Box w="100%">
+          <Image
+            src={post.mainImage || BLOG_IMAGE_FALLBACK}
+            alt={post.mainImageAlt || post.title}
+            w="100%"
+            h={{ base: '300px', md: '400px' }}
+            objectFit="cover"
+            fallbackSrc={BLOG_IMAGE_FALLBACK}
+          />
+        </Box>
+
+        <Container maxW="container.lg" py={10}>
+          <Link href="/blog">
             <Button
-              as="a"
-              href={post.link || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              colorScheme="blue"
+              leftIcon={<FaArrowLeft />}
+              variant="ghost"
+              mb={8}
+              color="white"
+              _hover={{ bg: 'whiteAlpha.200' }}
             >
-              Read on Medium
+              Back to Blog
             </Button>
-          </Flex>
-        </VStack>
-      </Container>
-    </Layout>
+          </Link>
+
+          <VStack spacing={6} align="flex-start">
+            <Heading as="h1" size="2xl" color="white">
+              {post.title}
+            </Heading>
+
+            <HStack color="whiteAlpha.700">
+              <Text>
+                {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </Text>
+              <Text>•</Text>
+              <Text>{post.author?.name || 'DAO Watch Team'}</Text>
+            </HStack>
+
+            <Flex wrap="wrap" gap={2}>
+              {(post.categories || []).map((category) => (
+                <Tag
+                  key={category.slug}
+                  size="md"
+                  bg={category.color || 'purple.500'}
+                  color="white"
+                  borderRadius="md"
+                >
+                  {category.title}
+                </Tag>
+              ))}
+            </Flex>
+
+            <Divider my={6} borderColor="whiteAlpha.200" />
+
+            {/* Render Portable Text body */}
+            {post.body && (
+              <Box w="100%" className="blog-content">
+                <PortableText
+                  value={post.body}
+                  components={portableTextComponents}
+                />
+              </Box>
+            )}
+
+            <Divider my={6} borderColor="whiteAlpha.200" />
+
+            <Flex justifyContent="space-between" w="100%" mt={8}>
+              <Button
+                leftIcon={<FaArrowLeft />}
+                colorScheme="purple"
+                variant="outline"
+                onClick={() => router.push('/blog')}
+              >
+                Back to Blog
+              </Button>
+            </Flex>
+          </VStack>
+        </Container>
+      </Layout>
     </>
   );
 }
 
-// Use getStaticPaths to define the paths to pre-render at build time
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Define a few default blog posts that will be pre-rendered
-  const fallbackPosts = [
-    {
-      slug: 'introduction-to-daos',
-    },
-    {
-      slug: 'the-future-of-dao-governance',
-    },
-    {
-      slug: 'dao-treasury-management-best-practices',
-    }
-  ];
+  const slugs = await client.fetch<Array<{ slug: string }>>(allPostSlugsQuery);
 
-  const paths = fallbackPosts.map((post) => ({
-    params: { slug: post.slug },
+  const paths = slugs.map(({ slug }) => ({
+    params: { slug },
   }));
 
   return {
     paths,
-    // Set fallback to false for static export
-    fallback: false,
+    fallback: true, // Allow new posts to be generated on-demand
   };
 };
 
-// Use getStaticProps to fetch data at build time
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
 
-  // Provide fallback data
-  const fallbackData = {
-    title: slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-    content: '<p>This content is generated statically. Updated content will be loaded client-side if available.</p>',
-    date: new Date().toISOString(),
-    author: 'DAO Watch Team',
-    image: BLOG_IMAGE_FALLBACK,
-    tags: ['DAO', 'Web3'],
-  };
+  const post = await client.fetch<SanityPostFull | null>(postBySlugQuery, {
+    slug,
+  });
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
-      slug,
-      fallbackData,
+      post,
     },
+    revalidate: 60, // Revalidate every 60 seconds
   };
-}; 
+};

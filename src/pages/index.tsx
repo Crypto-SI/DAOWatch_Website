@@ -5,9 +5,10 @@ import Hero from '../components/Hero';
 import LazySection from '../components/LazySection';
 import PageHead from '../components/PageHead';
 import HomeNarrative from '../components/HomeNarrative';
+import { GetStaticProps } from 'next';
+import { getBlogPostsForHomepage } from '../components/BlogPosts';
 
-// Temporarily disable BlogPosts section until the blog is restored.
-// const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
+const BlogPosts = dynamic(() => import('../components/BlogPosts'), { ssr: false });
 const Episodes = dynamic(() => import('../components/Episodes'), { ssr: false });
 const Community = dynamic(() => import('../components/Community'), { ssr: false });
 const Videos = dynamic(() => import('../components/Videos'), { ssr: false });
@@ -25,7 +26,11 @@ const SectionSkeleton = () => (
   </Box>
 );
 
-export default function Home() {
+interface HomeProps {
+  blogPosts: Awaited<ReturnType<typeof getBlogPostsForHomepage>>;
+}
+
+export default function Home({ blogPosts }: HomeProps) {
   return (
     <>
       <PageHead
@@ -36,20 +41,20 @@ export default function Home() {
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'DAO Watch',
-            url: 'https://daowatch.io',
+            url: 'https://daowatch.org',
             sameAs: [
               'https://www.youtube.com/@smartreach5326'
             ],
-            logo: 'https://daowatch.io/images/logo.png'
+            logo: 'https://daowatch.org/images/logo.png'
           },
           {
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'DAO Watch',
-            url: 'https://daowatch.io',
+            url: 'https://daowatch.org',
             potentialAction: {
               '@type': 'SearchAction',
-              target: 'https://daowatch.io/search?q={search_term_string}',
+              target: 'https://daowatch.org/search?q={search_term_string}',
               'query-input': 'required name=search_term_string'
             }
           }
@@ -65,10 +70,9 @@ export default function Home() {
       />
       <Layout>
         <Hero />
-        {/* Blog section removed until the blog feed stabilizes */}
-        {/* <LazySection placeholder={<SectionSkeleton title="Latest Reads" />}>
-          <BlogPosts />
-        </LazySection> */}
+        <LazySection placeholder={<SectionSkeleton />}>
+          <BlogPosts posts={blogPosts} />
+        </LazySection>
         <LazySection placeholder={<SectionSkeleton />}>
           <Episodes />
         </LazySection>
@@ -85,4 +89,15 @@ export default function Home() {
       </Layout>
     </>
   );
-} 
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const blogPosts = await getBlogPostsForHomepage();
+
+  return {
+    props: {
+      blogPosts,
+    },
+    revalidate: 60,
+  };
+};

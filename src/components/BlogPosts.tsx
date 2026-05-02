@@ -9,17 +9,19 @@ import {
   Flex,
   Stack,
   Tag,
-  Spinner,
-  Center,
   IconButton,
-  HStack
+  HStack,
+  Center,
+  Spinner,
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { keyframes } from '@emotion/react';
-import { BlogPost, fetchMediumPosts } from '../lib/medium';
+import { GetStaticProps } from 'next';
+import { client } from '../sanity/client';
+import { latestPostsQuery } from '../sanity/queries';
 import { BLOG_IMAGE_FALLBACK } from '../lib/media';
 
 // Define animation keyframes
@@ -42,9 +44,9 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const itemVariants = {
@@ -54,70 +56,63 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: 'easeOut',
+    },
+  },
 };
 
 // Card hover animation variants
 const cardHoverVariants = {
   hover: {
     y: -8,
-    boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.2)",
+    boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.2)',
     transition: {
-      duration: 0.3
-    }
-  }
+      duration: 0.3,
+    },
+  },
 };
 
-export default function BlogPosts() {
-  // Use client-side rendering to avoid hydration mismatch
-  const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [error, setError] = useState("");
+interface SanityPostCard {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  mainImage: string | null;
+  mainImageAlt: string | null;
+  publishedAt: string;
+  author: string | null;
+  authorImage: string | null;
+  categories: string[] | null;
+}
+
+interface BlogPostsProps {
+  posts?: SanityPostCard[];
+}
+
+export default function BlogPosts({ posts = [] }: BlogPostsProps) {
+  const [mounted, setMounted] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 3;
-  
-  // Fetch Medium posts with the DAOWATCH tag
-  useEffect(() => {
-    setMounted(true);
-    
-    const loadMediumPosts = async () => {
-      try {
-        setLoading(true);
-        const latestPosts = await fetchMediumPosts(6);
-        setPosts(latestPosts.map((post) => ({ ...post, tags: post.tags.slice(0, 3) })));
-      } catch (err) {
-        console.error('Error fetching Medium posts:', err);
-        setError("Failed to load blog posts. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadMediumPosts();
-  }, []);
 
   // Calculate visible posts based on current page
   const visiblePosts = posts.slice(
-    currentPage * postsPerPage, 
-    (currentPage * postsPerPage) + postsPerPage
+    currentPage * postsPerPage,
+    currentPage * postsPerPage + postsPerPage
   );
 
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   // Navigation handlers
   const handlePrevious = () => {
-    setCurrentPage(prev => Math.max(0, prev - 1));
+    setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentPage(prev => Math.min(totalPages - 1, prev + 1));
+    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
-  
+
   return (
-    <Box 
+    <Box
       py={{ base: 12, md: 20 }}
       position="relative"
       overflow="hidden"
@@ -135,22 +130,22 @@ export default function BlogPosts() {
         opacity="0.15"
         bgGradient="linear(to-br, #3d79fb, #000000, #3d79fb)"
         backgroundSize="200% 200%"
-        animation={mounted ? `${gradientShift} 15s ease infinite` : "none"}
+        animation={mounted ? `${gradientShift} 15s ease infinite` : 'none'}
         sx={{
-          "&::before": {
+          '&::before': {
             content: '""',
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage: 
-              "radial-gradient(circle at 20% 30%, rgba(61, 121, 251, 0.7) 0%, transparent 30%), " +
-              "radial-gradient(circle at 80% 70%, rgba(107, 70, 193, 0.5) 0%, transparent 40%)",
-          }
+            width: '100%',
+            height: '100%',
+            backgroundImage:
+              'radial-gradient(circle at 20% 30%, rgba(61, 121, 251, 0.7) 0%, transparent 30%), ' +
+              'radial-gradient(circle at 80% 70%, rgba(107, 70, 193, 0.5) 0%, transparent 40%)',
+          },
         }}
       />
-      
+
       {/* Floating orbs effect - matching hero style */}
       <Box
         position="absolute"
@@ -161,10 +156,10 @@ export default function BlogPosts() {
         borderRadius="full"
         bgGradient="radial(circle at center, rgba(61, 121, 251, 0.4) 0%, transparent 70%)"
         filter="blur(40px)"
-        opacity={mounted ? "0.6" : "0"}
+        opacity={mounted ? '0.6' : '0'}
         transition="opacity 1s ease-in-out"
       />
-      
+
       <Box
         position="absolute"
         bottom="15%"
@@ -174,21 +169,21 @@ export default function BlogPosts() {
         borderRadius="full"
         bgGradient="radial(circle at center, rgba(107, 70, 193, 0.4) 0%, transparent 70%)"
         filter="blur(30px)"
-        opacity={mounted ? "0.5" : "0"}
+        opacity={mounted ? '0.5' : '0'}
         transition="opacity 1s ease-in-out"
       />
-      
+
       <Container maxW="container.xl" position="relative" zIndex="1">
-        <MotionStack 
-          spacing={4} 
-          mb={12} 
+        <MotionStack
+          spacing={4}
+          mb={12}
           textAlign="center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <MotionHeading 
-            as="h2" 
+          <MotionHeading
+            as="h2"
             size="2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -198,48 +193,35 @@ export default function BlogPosts() {
           >
             Latest Blog Posts
           </MotionHeading>
-          <MotionText 
-            fontSize="xl" 
-            maxW="2xl" 
+          <MotionText
+            fontSize="xl"
+            maxW="2xl"
             mx="auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
             opacity="0.9"
           >
-            Stay up to date with the latest developments, insights, and best practices in the DAO ecosystem.
+            Stay up to date with the latest developments, insights, and best
+            practices in the DAO ecosystem.
           </MotionText>
         </MotionStack>
 
-        {loading ? (
+        {posts.length === 0 ? (
           <Center py={10}>
-            <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
-          </Center>
-        ) : error ? (
-          <Center py={10}>
-            <Text color="red.500">{error}</Text>
-          </Center>
-        ) : posts.length === 0 ? (
-          <Center py={10}>
-            <Text>No DAOWATCH blog posts found. Check back later!</Text>
+            <Text>No blog posts found. Check back later!</Text>
           </Center>
         ) : (
           <>
-            <MotionSimpleGrid 
-              columns={{ base: 1, md: 3 }} 
+            <MotionSimpleGrid
+              columns={{ base: 1, md: 3 }}
               gap={8}
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
               {visiblePosts.map((post) => (
-                <Link
-                  href={post.link}
-                  key={post.id}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Read ${post.title} on Medium`}
-                >
+                <Link href={`/blog/${post.slug}`} key={post._id}>
                   <MotionBox
                     borderRadius="lg"
                     overflow="hidden"
@@ -256,8 +238,8 @@ export default function BlogPosts() {
                     <Box position="relative" height="200px" width="100%">
                       {mounted ? (
                         <Image
-                          src={post.image}
-                          alt={post.title}
+                          src={post.mainImage || BLOG_IMAGE_FALLBACK}
+                          alt={post.mainImageAlt || post.title}
                           objectFit="cover"
                           width="100%"
                           height="100%"
@@ -269,34 +251,46 @@ export default function BlogPosts() {
                     </Box>
 
                     <Stack p={5} flex="1">
-                      <Heading as="h3" size="md" lineHeight="1.3" mb={2} color="white">
+                      <Heading
+                        as="h3"
+                        size="md"
+                        lineHeight="1.3"
+                        mb={2}
+                        color="white"
+                      >
                         {post.title}
                       </Heading>
-                      
+
                       <Text fontSize="sm" color="whiteAlpha.700" mb={1}>
-                        {new Date(post.date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })} • {post.author}
+                        {new Date(post.publishedAt).toLocaleDateString(
+                          'en-US',
+                          {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          }
+                        )}{' '}
+                        • {post.author || 'DAO Watch Team'}
                       </Text>
-                      
+
                       <Text noOfLines={3} mb={4} color="whiteAlpha.900">
-                        {post.excerpt}
+                        {post.excerpt || 'Read more...'}
                       </Text>
-                      
+
                       <Flex wrap="wrap" gap={2} mt="auto">
-                        {post.tags.map((tag, index) => (
-                          <MotionBox
-                            key={`${post.id}-${index}`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Tag colorScheme="blue" size="sm">
-                              {tag}
-                            </Tag>
-                          </MotionBox>
-                        ))}
+                        {(post.categories || [])
+                          .slice(0, 3)
+                          .map((tag, index) => (
+                            <MotionBox
+                              key={`${post._id}-${index}`}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Tag colorScheme="blue" size="sm">
+                                {tag}
+                              </Tag>
+                            </MotionBox>
+                          ))}
                       </Flex>
                     </Stack>
                   </MotionBox>
@@ -321,11 +315,11 @@ export default function BlogPosts() {
                     colorScheme="blue"
                     size="lg"
                   />
-                  
+
                   <Text fontWeight="medium">
                     {currentPage + 1} / {totalPages}
                   </Text>
-                  
+
                   <IconButton
                     aria-label="Next page"
                     icon={<ChevronRightIcon w={6} h={6} />}
@@ -342,18 +336,26 @@ export default function BlogPosts() {
         )}
 
         <Flex justify="center" mt={12}>
-          <a href="https://medium.com/@cryptosixxx" target="_blank" rel="noopener noreferrer">
-            <Button 
-              colorScheme="blue" 
+          <Link href="/blog">
+            <Button
+              colorScheme="blue"
               size="lg"
               rounded="md"
               px={8}
             >
               View All Posts
             </Button>
-          </a>
+          </Link>
         </Flex>
       </Container>
     </Box>
   );
-} 
+}
+
+/**
+ * Fetch posts for the homepage BlogPosts section.
+ * Used by the index page's getStaticProps.
+ */
+export async function getBlogPostsForHomepage(): Promise<SanityPostCard[]> {
+  return client.fetch<SanityPostCard[]>(latestPostsQuery);
+}
