@@ -84,7 +84,7 @@ export default function BlogPostPage({ post }: BlogPostProps) {
               Blog Post Not Found
             </Heading>
             <Text mb={8} color="whiteAlpha.800">
-              The blog post you're looking for doesn't exist.
+              The blog post you&apos;re looking for doesn&apos;t exist.
             </Text>
             <Button
               leftIcon={<FaArrowLeft />}
