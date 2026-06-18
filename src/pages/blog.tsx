@@ -167,11 +167,11 @@ export default function Blog({ posts }: BlogPageProps) {
 
           {/* Hero section */}
           <Box py={{ base: 12, md: 20 }}>
-            <Container maxW="container.xl">
+            <Container maxW="container.xl" px={{ base: 4, md: 6 }}>
               <VStack spacing={6} align="center" textAlign="center">
                 <MotionHeading
                   as="h1"
-                  size="2xl"
+                  fontSize={{ base: "xl", md: "2xl" }}
                   fontWeight="bold"
                   bgGradient="linear(to-r, white, purple.200)"
                   backgroundClip="text"
@@ -182,9 +182,10 @@ export default function Blog({ posts }: BlogPageProps) {
                   DAO Watch Blog
                 </MotionHeading>
                 <MotionText
-                  fontSize={{ base: 'lg', md: 'xl' }}
+                  fontSize={{ base: "sm", md: "xl" }}
                   maxW="2xl"
                   mb={4}
+                  px={{ base: 4, md: 0 }}
                   opacity="0.9"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -196,7 +197,7 @@ export default function Blog({ posts }: BlogPageProps) {
 
                 {/* Search bar */}
                 <MotionBox
-                  w={{ base: '90%', md: '400px' }}
+                  w={{ base: "85%", md: "400px" }}
                   mt={4}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -272,7 +273,7 @@ export default function Blog({ posts }: BlogPageProps) {
                             display="flex"
                             flexDirection="column"
                           >
-                            <Box height="200px" position="relative">
+                            <Box height={{ base: "160px", md: "200px" }} position="relative">
                               <Image
                                 src={post.mainImage || BLOG_IMAGE_FALLBACK}
                                 alt={post.mainImageAlt || post.title}
@@ -295,9 +296,9 @@ export default function Blog({ posts }: BlogPageProps) {
                                 left="3"
                                 right="3"
                               >
-                                <HStack>
+                                <HStack flexWrap="wrap" gap={1}>
                                   {(post.categories || [])
-                                    .slice(0, 3)
+                                    .slice(0, 2)
                                     .map((tag) => (
                                       <Badge
                                         key={tag}

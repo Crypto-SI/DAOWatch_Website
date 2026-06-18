@@ -184,7 +184,7 @@ export default function BlogPosts({ posts = [] }: BlogPostsProps) {
         >
           <MotionHeading
             as="h2"
-            size="2xl"
+            fontSize={{ base: "xl", md: "2xl" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
@@ -194,9 +194,10 @@ export default function BlogPosts({ posts = [] }: BlogPostsProps) {
             Latest Blog Posts
           </MotionHeading>
           <MotionText
-            fontSize="xl"
+            fontSize={{ base: "md", md: "xl" }}
             maxW="2xl"
             mx="auto"
+            px={{ base: 4, md: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
@@ -235,7 +236,7 @@ export default function BlogPosts({ posts = [] }: BlogPostsProps) {
                     variants={itemVariants}
                     whileHover={cardHoverVariants.hover}
                   >
-                    <Box position="relative" height="200px" width="100%">
+                    <Box position="relative" height={{ base: "160px", md: "200px" }} width="100%">
                       {mounted ? (
                         <Image
                           src={post.mainImage || BLOG_IMAGE_FALLBACK}

@@ -45,8 +45,8 @@ export default function Header() {
           <Flex alignItems="center">
             <Link href="/" aria-label="DAO Watch home">
               <Box 
-                w={{ base: "280px", md: "400px" }} 
-                h={{ base: "70px", md: "100px" }} 
+                w={{ base: "160px", md: "260px" }} 
+                h={{ base: "40px", md: "60px" }} 
                 position="relative"
                 display="flex"
                 alignItems="center"

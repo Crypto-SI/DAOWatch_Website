@@ -37,22 +37,19 @@ export default function Footer() {
     >
       <Container as={Stack} maxW="container.xl" py={10}>
         <SimpleGrid
-          templateColumns={{ sm: '1fr 1fr', md: '2fr 1fr 1fr 1fr' }}
+          templateColumns={{ base: '1fr', sm: '1fr 1fr', md: '2fr 1fr 1fr 1fr' }}
           spacing={8}
         >
           <Stack spacing={6}>
             <Box 
-              w={{ base: "420px", md: "600px" }} 
-              h={{ base: "105px", md: "150px" }} 
+              w={{ base: "200px", md: "300px" }} 
+              h={{ base: "50px", md: "75px" }} 
               mb={2}
               display="flex"
               alignItems="center"
               justifyContent="flex-start"
-              bg="black"
-              borderRadius="md"
-              p={1}
             >
-              <Box boxSize={{ base: "40px", md: "50px" }}>
+              <Box boxSize={{ base: "36px", md: "50px" }}>
                 <Image
                   src="/images/logo-160.webp"
                   alt="DAO Watch logomark"
@@ -101,9 +98,9 @@ export default function Footer() {
           </Stack>
           <Stack align="flex-start">
             <ListHeader>Legal</ListHeader>
-            <Text color="whiteAlpha.900">Terms of Service</Text>
-            <Text color="whiteAlpha.900">Privacy Policy</Text>
-            <Text color="whiteAlpha.900">Cookie Policy</Text>
+            <Link href="/terms">Terms of Service</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/cookies">Cookie Policy</Link>
           </Stack>
         </SimpleGrid>
       </Container>
