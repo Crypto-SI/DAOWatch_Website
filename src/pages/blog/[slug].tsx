@@ -136,23 +136,23 @@ export default function BlogPostPage({ post }: BlogPostProps) {
         structuredData={structuredData}
       />
       <Layout>
-        <Box w="100%">
+        <Box w="100%" bg="brand.black" color="white">
           <Image
             src={post.mainImage || BLOG_IMAGE_FALLBACK}
             alt={post.mainImageAlt || post.title}
             w="100%"
-            h={{ base: '300px', md: '400px' }}
+            h={{ base: '200px', md: '400px' }}
             objectFit="cover"
             fallbackSrc={BLOG_IMAGE_FALLBACK}
           />
         </Box>
 
-        <Container maxW="container.lg" py={10}>
+        <Container maxW="container.lg" py={{ base: 6, md: 10 }} px={{ base: 4, md: 8 }}>
           <Link href="/blog">
             <Button
               leftIcon={<FaArrowLeft />}
               variant="ghost"
-              mb={8}
+              mb={{ base: 4, md: 8 }}
               color="white"
               _hover={{ bg: 'whiteAlpha.200' }}
             >
@@ -161,11 +161,16 @@ export default function BlogPostPage({ post }: BlogPostProps) {
           </Link>
 
           <VStack spacing={6} align="flex-start">
-            <Heading as="h1" size="2xl" color="white">
+            <Heading 
+              as="h1" 
+              size={{ base: "xl", md: "2xl" }}
+              fontSize={{ base: "2xl", md: "4xl" }}
+              color="white"
+            >
               {post.title}
             </Heading>
 
-            <HStack color="whiteAlpha.700">
+            <HStack color="whiteAlpha.700" fontSize={{ base: "sm", md: "md" }}>
               <Text>
                 {new Date(post.publishedAt).toLocaleDateString('en-US', {
                   year: 'numeric',

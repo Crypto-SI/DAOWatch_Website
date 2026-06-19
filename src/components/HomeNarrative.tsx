@@ -28,7 +28,7 @@ const descriptiveLinks = [
 
 export default function HomeNarrative() {
   return (
-    <Box bg="brand.gray.900" color="white" py={{ base: 10, md: 16 }}>
+    <Box bg="brand.black" color="white" py={{ base: 10, md: 16 }}>
       <Container maxW="container.xl">
         <Heading as="h2" size="xl" mb={6}>
           Why DAO Watch Matters for Decentralized Operators

@@ -21,7 +21,7 @@ export default function Document() {
           media="(min-width: 768px)"
         />
       </Head>
-      <body>
+      <body style={{ backgroundColor: '#000000', color: '#ffffff' }}>
         <Main />
         <NextScript />
       </body>

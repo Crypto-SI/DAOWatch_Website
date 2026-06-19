@@ -12,6 +12,8 @@ export default function Layout({ children }: LayoutProps) {
     <Flex 
       direction="column" 
       minH="100vh"
+      bg="brand.black"
+      color="white"
     >
       <Header />
       <Box as="main" id="main-content" flex="1" width="100%">
